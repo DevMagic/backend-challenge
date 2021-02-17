@@ -302,5 +302,5 @@ Sua PR será avaliada e lhe daremos um feedback o mais rápido possível.
 > *Resposta:* X
 
 > ### Qual banco de dados ?
-> *Resposta:* Qualquer um sendo o Postgres e Mongodb um diferencial
+> *Resposta:* Qualquer um, sendo o Postgres ou Mongodb um diferencial
 
