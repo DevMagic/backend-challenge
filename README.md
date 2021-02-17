@@ -2,7 +2,7 @@
 
 # Challenge - Developer Backend
 
-O desafio é construir uma api rest que seja capaz de cadastrar, buscar, atualizar e apagar os jogadores, ela deverá ser capaz de consultar a <a href='https://developer.riotgames.com/'>Api da Riot Games</a> para trazer informações sobre os jogadores que serão cadastrados.
+O desafio é construir uma API Rest que seja capaz de cadastrar, buscar, atualizar e apagar os jogadores, ela deverá ser capaz de consultar a <a href='https://developer.riotgames.com/'>Api da Riot Games</a> para trazer informações sobre os jogadores que serão cadastrados e os dados armazenados num banco de dados PostgreSQL.
 
 Lista dos jogadores a serem cadastrados:
 
@@ -272,6 +272,12 @@ Deve possuir uma rota _DELETE_ para apagar o jogador através do ID:
 API deve ser desenvolvida em NodeJs;
 
 ## Avaliação
+
+Você será avaliado pela usabilidade, por respeitar o design e pela arquitetura da API.
+
+* Uso do Git
+* Arquitetura da API
+* Diferencial: NestJS
 
 ### O que será avaliado?
 
