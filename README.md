@@ -273,13 +273,6 @@ API deve ser desenvolvida em NodeJs;
 
 ## Avaliação
 
-<br>
-
-
-### **Code Review**
-
-<br>
-
 ### O que será avaliado?
 
 <br>
