@@ -41,7 +41,7 @@ Deve ser construido uma tabela com essas colunas
 
 <br>
 
-Deve possuir uma rota **POST** para cadastrar um JOGADOR, deverá receber os siguientes dados no corpo da requisição:
+Deve possuir uma rota **POST** para cadastrar um JOGADOR, deverá receber os seguintes dados no corpo da requisição:
 
 _Body_
 
