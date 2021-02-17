@@ -273,7 +273,29 @@ API deve ser desenvolvida em NodeJs;
 
 ## Avaliação
 
-...
+<br>
+
+
+### **Code Review**
+
+<br>
+
+### O que será avaliado?
+
+<br>
+
+- A qualidade do código
+- As decisões que você fez para resolver o desafio
+
+## *Como participar?*
+
+- Farça um fork deste repositório;
+- Clone seu fork na sua máquina;
+- Crie um novo branch com o seguinte padrão "challenge/seu-nome";
+- Resolva o desafio;
+- Faça uma PR para este repositório com instruções claras de como executar seu código
+
+Sua PR será avaliada e lhe daremos um feedback o mais rápido possível.
 
 ## Dicas
 
