@@ -267,6 +267,10 @@ Deve possuir uma rota _DELETE_ para apagar o jogador através do ID:
 }
 ```
 
+## Requisitos
+
+API deve ser desenvolvida em NodeJs;
+
 ## Avaliação
 
 ...
