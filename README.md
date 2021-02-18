@@ -27,7 +27,7 @@ Para consumir a api é necessario criar uma conta na plataforma e ler a document
 
 ## Challenge Accepted</a>
 
-Deve ser construido uma tabela com essas colunas
+Deve ser construido uma tabela chamada Summoner no banco de dados com essas colunas
 
 | Id  | Nickname      | AccountId       | SummonerLevel | ProfileIconId | SummonerId         |
 | --- | ------------- | --------------- | ------------- | ------------- | ------------------ |
@@ -277,14 +277,10 @@ Você será avaliado pela usabilidade, por respeitar o design e pela arquitetura
 
 * Uso do Git
 * Arquitetura da API
-* Diferencial: NestJS
-
-### O que será avaliado?
-
-<br>
-
-- A qualidade do código
-- As decisões que você fez para resolver o desafio
+* Diferencial: NestJS ou Postgres
+* A qualidade do código
+* As decisões que você fez para resolver o desafio
+* Tratamento de erros
 
 ## *Como participar?*
 
@@ -296,14 +292,15 @@ Você será avaliado pela usabilidade, por respeitar o design e pela arquitetura
 
 Sua PR será avaliada e lhe daremos um feedback o mais rápido possível.
 
-## Dicas
-
-...
 
 ## FAQ
 
 > ### Posso utilizar frameworks/bibliotecas ?
+> *Resposta:* Não so deve como é um diferencial
 
 > ### Quanto tempo tenho ?
+> *Resposta:* X
 
 > ### Qual banco de dados ?
+> *Resposta:* Qualquer um, sendo o Postgres ou Mongodb um diferencial
+
