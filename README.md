@@ -2,7 +2,7 @@
 
 # Challenge - Developer Backend
 
-O desafio é construir uma API Rest que seja capaz de cadastrar, buscar, atualizar e apagar os jogadores, ela deverá ser capaz de consultar a <a href='https://developer.riotgames.com/'>Api da Riot Games</a> para trazer informações sobre os jogadores que serão cadastrados e os dados armazenados num banco de dados PostgreSQL.
+O desafio é construir uma API Rest que seja capaz de cadastrar, buscar, atualizar e apagar os jogadores. Ela deverá ser capaz de consultar a <a href='https://developer.riotgames.com/'>Api da Riot Games</a> para trazer os dados dos jogadores que serão cadastrados em uma base de dados.
 
 Lista dos jogadores a serem cadastrados:
 
@@ -23,11 +23,11 @@ Lista dos jogadores a serem cadastrados:
 
 <br>
 
-Para consumir a api é necessario criar uma conta na plataforma e ler a documentação, os endpoints que serão usados nesse projeto requerem autenticação e é possivel gerar um token com tempo de expiração para poder estar consumindo esse serviço.
+Para consumir a API é necessário criar uma conta na plataforma e ler a documentação. Os endpoints que serão usados nesse projeto requerem autenticação e é possivel gerar um token com tempo de expiração para poder estar consumindo esse serviço.
 
 ## Challenge Accepted</a>
 
-Deve ser construido uma tabela chamada Summoner no banco de dados com essas colunas
+Deve ser construída uma tabela chamada Summoner no banco de dados com essas colunas:
 
 | Id  | Nickname      | AccountId       | SummonerLevel | ProfileIconId | SummonerId         |
 | --- | ------------- | --------------- | ------------- | ------------- | ------------------ |
@@ -41,7 +41,7 @@ Deve ser construido uma tabela chamada Summoner no banco de dados com essas colu
 
 <br>
 
-Deve possuir uma rota **POST** para cadastrar um JOGADOR, deverá receber os seguintes dados no corpo da requisição:
+Deve possuir uma rota **POST** para cadastrar um JOGADOR. Deverá receber os seguintes dados no corpo da requisição:
 
 _Body_
 
@@ -51,7 +51,7 @@ _Body_
 }
 ```
 
-A rota deve consumir o **SummonerName** do corpo e usar para consultar no end point abaixo da API riotgames as informações _AccountId_, _SummonerLevel_, _ProfileIconId_ e _Id_.
+A rota deve consumir o **SummonerName** do corpo e usá-lo para consultar no endpoint abaixo da API riotgames as informações _AccountId_, _SummonerLevel_, _ProfileIconId_ e _Id_.
 
 <br>
 
@@ -87,7 +87,7 @@ _O ID do jogador pode ser tanto UUID ou numérico incremental_
 
 <br>
 
-Deve possuir uma rota **GET** para listar as informações da tabela Summoner, modelo esperado do retorno abaixo:
+Deve possuir uma rota **GET** para listar as informações da tabela **Summoner**, modelo esperado do retorno abaixo:
 
 ### **Response**
 
@@ -128,7 +128,7 @@ Deve possuir uma rota **GET** para listar as informações da tabela Summoner, m
 
 <br>
 
-Deve possuir uma rota **GET** que ira além de trazer as informações da tabela ira trazer as quantidades de vitorias e derrotas de cada jogador:
+Deve possuir uma rota **GET** que além de trazer as informações da tabela, irá trazer as quantidades de vitórias e derrotas de cada jogador:
 
 ### **Response**
 
@@ -171,7 +171,7 @@ Deve possuir uma rota **GET** que ira além de trazer as informações da tabela
 ];
 ```
 
-Para trazer essas informações deve consumir o endpoint da riotgames abaixo, ele retorna um array de objetos com informações de um Jogador com base no **encryptedSummonerId** enviado e cada objeto possui ás propriedades _wins_ e _losses_:
+Para trazer essas informações, consuma o endpoint da riotgames abaixo, ele retorna um array de objetos com os dados de um jogador com base no **encryptedSummonerId** enviado e cada objeto possui as propriedades _wins_ e _losses_:
 
 ```javascript
 /lol/league/v4/entries/by-summoner/{encryptedSummonerId}?api_key={token}
@@ -214,13 +214,13 @@ _response_
 ];
 ```
 
-Deve ser feito a soma das vitorias e derrotas de cada objeto do array, lembrando que deve ser executado para cada jogador da tabela.
+Deve ser feito a somatória das vitórias e derrotas de cada objeto do array, lembrando que deve ser executado para cada jogador da tabela.
 
 ### **ATUALIZAR JOGADOR**
 
 <br>
 
-Deve possuir uma rota _PUT_ para atualizar somente o **summonerName** e **summonerLevel** do jogador através do ID:
+Deve possuir uma rota *PUT* para atualizar somente o **summonerName** e **summonerLevel** do jogador através do ID:
 
 _Body_
 
@@ -253,7 +253,7 @@ _Body_
 
 <br>
 
-Deve possuir uma rota _DELETE_ para apagar o jogador através do ID:
+Deve possuir uma rota *DELETE* para apagar o jogador através do ID:
 
 ### **Response**
 
@@ -269,7 +269,7 @@ Deve possuir uma rota _DELETE_ para apagar o jogador através do ID:
 
 ## Requisitos
 
-API deve ser desenvolvida em NodeJs;
+API deve ser desenvolvida em NodeJs.
 
 ## Avaliação
 
@@ -288,18 +288,18 @@ Você será avaliado pela usabilidade, por respeitar o design e pela arquitetura
 - Clone seu fork na sua máquina;
 - Crie um novo branch com o seguinte padrão "challenge/seu-nome";
 - Resolva o desafio;
-- Faça uma PR para este repositório com instruções claras de como executar seu código
+- Faça uma PR para este repositório com instruções claras de como executar seu código.
 
 Sua PR será avaliada e lhe daremos um feedback o mais rápido possível.
 
 
 ## FAQ
 
-> ### Posso utilizar frameworks/bibliotecas ?
-> *Resposta:* Não so deve como é um diferencial
+> ### Posso utilizar frameworks/bibliotecas?
+> *Resposta:* Não só pode como será um diferencial
 
 > ### Quanto tempo tenho ?
-> *Resposta:* X
+> *Resposta:* Esperamos sua resposta em até 7 dias
 
 > ### Qual banco de dados ?
 > *Resposta:* Qualquer um, sendo o Postgres ou Mongodb um diferencial
