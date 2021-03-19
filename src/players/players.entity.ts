@@ -8,7 +8,7 @@ export class Player extends BaseEntity {
     id: string;
 
     @Column({nullable: false, type: 'varchar', length: 200})
-    nickname: string;
+    name: string;
 
     @Column({nullable: false, type: 'varchar', length: 200})
     accountId: string;
@@ -21,6 +21,12 @@ export class Player extends BaseEntity {
 
     @Column({nullable: false, type: 'varchar', length: 200})
     summonerId: string;
+
+    @Column({nullable: false, type: 'varchar', length: 200})
+    puuid: string
+
+    @Column({nullable: false, type: 'varchar', length: 200})
+    revisionDate: string
 
     @CreateDateColumn()
     createdAt: Date;
