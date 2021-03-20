@@ -12,7 +12,6 @@ export class PlayersService {
         private playerRepository: PlayerRepository
     ) {}
 
-
     async createPlayer(createPlayerDto: CreatePlayerDto): Promise<Player> {
         return this.playerRepository.createPlayer(createPlayerDto);
     }
@@ -21,7 +20,15 @@ export class PlayersService {
         return this.playerRepository.editPlayerById(editPlayerDto);
     }
 
-    async showPlayers(): Promise<Player[]> {
-        return this.playerRepository.find();
+    async showSimplePlayers(): Promise<any[]> {
+        return this.playerRepository.showSimplePlayers()
+    }
+
+    async showDetailsPlayers(): Promise<any> {
+        return this.playerRepository.showDetailsPlayers()
+    }
+
+    async deletePlayerById(idPlayer: string): Promise<any> {
+        return this.playerRepository.delete(idPlayer)
     }
 }

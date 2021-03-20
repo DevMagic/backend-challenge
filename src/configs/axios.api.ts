@@ -1,11 +1,17 @@
 import axios from 'axios'
 
 
-const api = axios.create({
+export const apiSimpleLeague = axios.create({
     baseURL: 'https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-name',
     headers: {
-        "X-Riot-Token": "RGAPI-29252515-e965-446c-850f-6ba5dcb7511f"
+        "X-Riot-Token": "RGAPI-ddf9b090-bf78-4aeb-a316-76741a0c647b"
     }
 })
 
-export default api;
+export const apiDetailLeague = axios.create({
+    baseURL: 'https://br1.api.riotgames.com/lol/league/v4/entries/by-summoner',
+    headers: {
+        "X-Riot-Token": "RGAPI-ddf9b090-bf78-4aeb-a316-76741a0c647b"
+    }
+})
+

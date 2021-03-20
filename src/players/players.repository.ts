@@ -1,5 +1,6 @@
 import { ConflictException, InternalServerErrorException } from "@nestjs/common";
-import api from "src/configs/axios.api";
+import axios from "axios";
+import {apiDetailLeague,apiSimpleLeague} from "src/configs/axios.api";
 import { EntityRepository, Repository } from "typeorm";
 import { CreatePlayerDto } from "./dtos/create-player.dto";
 import { EditPlayerDto } from "./dtos/edit-player.dto";
@@ -12,7 +13,7 @@ export class PlayerRepository extends Repository<Player> {
         
         //tratar provavel erro
         try {
-        var {data} = await api.get(`/${summonerName}`)
+        var {data} = await apiSimpleLeague.get(`/${summonerName}`)
         } catch (error) {
           throw new Error(error)
         }
@@ -79,6 +80,44 @@ export class PlayerRepository extends Repository<Player> {
     }
 
     async showDetailsPlayers(): Promise<any[]> {
-      const 
+      const players = await this.find()
+      const detailsListPlayers = [];
+
+      for (const player of players) {
+        const {data} = await apiDetailLeague.get(`/${player.summonerId}`)
+        let totalWins = 0;
+        let totalLosses = 0;
+
+        if(data.length > 0){
+          data.map(modo => {
+            totalWins = modo.wins + totalWins;
+            totalLosses = modo.losses + totalLosses;
+
+            detailsListPlayers.push({
+              id: player.id,
+              nickname: player.name,
+              accountId: player.accountId,
+              summonerLevel: player.summonerLevel,
+              profileIconId: player.profileIconId,
+              summonerId: player.summonerId,
+              wins: totalWins,
+              losses: totalLosses,
+            })
+          })
+        } else {
+          detailsListPlayers.push({
+            id: player.id,
+            nickname: player.name,
+            accountId: player.accountId,
+            summonerLevel: player.summonerLevel,
+            profileIconId: player.profileIconId,
+            summonerId: player.summonerId,
+            wins: 0,
+            losses: 0,
+          })
+        }
+      }
+
+      return detailsListPlayers;
     }
 }

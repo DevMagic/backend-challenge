@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, ValidationPipe } from '@nestjs/common';
 import { CreatePlayerDto } from './dtos/create-player.dto';
 import { EditPlayerDto } from './dtos/edit-player.dto';
 import { ReturnUserDto } from './dtos/return-player.dto';
@@ -12,16 +12,16 @@ export class PlayersController {
     @Post('/create')
     @HttpCode(200)
     async createPlayer(
-        @Body() createUserDto: CreatePlayerDto,
+        @Body(ValidationPipe) createUserDto: CreatePlayerDto,
     ): Promise<Player> {
         const player = await this.playersService.createPlayer(createUserDto);
         return player
     }
 
-    @Post('/edit')
+    @Put('/edit')
     @HttpCode(200)
     async editPlayer(
-        @Body() editPlayerDto: EditPlayerDto
+        @Body(ValidationPipe) editPlayerDto: EditPlayerDto
     ): Promise<Player> {
         const player = await this.playersService.editPlayer(editPlayerDto);
         return player;
@@ -30,8 +30,27 @@ export class PlayersController {
     @Get('/')
     @HttpCode(200)
     async showPlayers(): Promise<any[]> {
-        const list = this.showPlayers()
+        const list = this.playersService.showSimplePlayers()
         
         return list;
+    }
+
+    @Get('/details')
+    @HttpCode(200)
+    async showDetailsPlayer(): Promise<any[]> {
+        const list = this.playersService.showDetailsPlayers()
+        
+        return list;
+    }
+
+    @Delete('/delete/:id')
+    @HttpCode(200)
+    async deletePlayerById(
+       @Param('id') id:string
+    ): Promise<String> {
+        this.playersService.deletePlayerById(id)
+
+        return "Deletado com sucesso"
+        
     }
 }
