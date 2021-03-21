@@ -1,4 +1,4 @@
-import { ConflictException, InternalServerErrorException } from "@nestjs/common";
+import { ConflictException, HttpException, HttpStatus, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import axios from "axios";
 import {apiDetailLeague,apiSimpleLeague} from "src/configs/axios.api";
 import { EntityRepository, Repository } from "typeorm";
@@ -11,13 +11,12 @@ export class PlayerRepository extends Repository<Player> {
     async createPlayer(createPlayerDto: CreatePlayerDto): Promise<Player> {
         const {summonerName} = createPlayerDto;
         
-        //tratar provavel erro
         try {
-        var {data} = await apiSimpleLeague.get(`/${summonerName}`)
+          var {data} = await apiSimpleLeague.get(`/${summonerName}`)
         } catch (error) {
-          throw new Error(error)
-        }
-        
+          throw new NotFoundException("Summoner não foi encontrado")
+        }   
+             
         const {accountId,name,profileIconId,id,summonerLevel,revisionDate, puuid} = data;
         const player = this.create({accountId,name,profileIconId,summonerId: id,summonerLevel,revisionDate, puuid})
         
@@ -44,6 +43,8 @@ export class PlayerRepository extends Repository<Player> {
       if(editPlayer) {
       editPlayer.name = summonerName;
       editPlayer.summonerLevel = summonerLevel;
+      } else {
+        throw new NotFoundException("ID de summoner não cadastrado")
       }
 
       try {

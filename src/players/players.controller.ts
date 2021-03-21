@@ -48,9 +48,6 @@ export class PlayersController {
     async deletePlayerById(
        @Param('id') id:string
     ): Promise<String> {
-        this.playersService.deletePlayerById(id)
-
-        return "Deletado com sucesso"
-        
+        return this.playersService.deletePlayerById(id)
     }
 }

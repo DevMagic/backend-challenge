@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { response } from 'express';
 import { CreatePlayerDto } from './dtos/create-player.dto';
 import { EditPlayerDto } from './dtos/edit-player.dto';
 import { Player } from './players.entity';
@@ -29,6 +30,12 @@ export class PlayersService {
     }
 
     async deletePlayerById(idPlayer: string): Promise<any> {
-        return this.playerRepository.delete(idPlayer)
+        try{
+            const response = await this.playerRepository.delete(idPlayer)
+        }catch(error){
+            throw new NotFoundException("Summoner não foi encontrado para delete")
+        }
+
+        return response; 
     }
 }
