@@ -35,10 +35,10 @@ export class PlayerRepository extends Repository<Player> {
 
     }
 
-    async editPlayerById(editPlayerDto: EditPlayerDto): Promise<Player> {
-      const {id,summonerName, summonerLevel} = editPlayerDto;
+    async editPlayerById(editPlayerDto: EditPlayerDto, idPlayer: string): Promise<Player> {
+      const {summonerName, summonerLevel} = editPlayerDto;
 
-      const editPlayer = await this.findOne(id)
+      const editPlayer = await this.findOne(idPlayer)
 
       if(editPlayer) {
       editPlayer.name = summonerName;

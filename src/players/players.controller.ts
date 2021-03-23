@@ -18,12 +18,13 @@ export class PlayersController {
         return player
     }
 
-    @Put('/edit')
+    @Put('/edit/:id')
     @HttpCode(200)
     async editPlayer(
+        @Param('id') id:string,
         @Body(ValidationPipe) editPlayerDto: EditPlayerDto
     ): Promise<Player> {
-        const player = await this.playersService.editPlayer(editPlayerDto);
+        const player = await this.playersService.editPlayer(editPlayerDto,id);
         return player;
     }
 

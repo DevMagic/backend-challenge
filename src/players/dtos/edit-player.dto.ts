@@ -4,14 +4,7 @@ import {
     MinLength
 } from 'class-validator'
 
-export class EditPlayerDto {
-    
-    @IsNotEmpty({
-        message: "Gentileza fornecer um ID"
-    })
-    id: string;
-
-    
+export class EditPlayerDto {    
     @IsNotEmpty({
         message: "Gentileza fornecer um SummonerName"
     }) 

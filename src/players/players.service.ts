@@ -18,8 +18,8 @@ export class PlayersService {
         return this.playerRepository.createPlayer(createPlayerDto);
     }
 
-    async editPlayer(editPlayerDto: EditPlayerDto) : Promise<Player> {
-        return this.playerRepository.editPlayerById(editPlayerDto)
+    async editPlayer(editPlayerDto: EditPlayerDto, idPlayer: string) : Promise<Player> {
+        return this.playerRepository.editPlayerById(editPlayerDto, idPlayer)
     }
 
     async showSimplePlayers(): Promise<any[]> {
@@ -54,16 +54,17 @@ export class PlayersService {
               totalWins = modo.wins + totalWins;
               totalLosses = modo.losses + totalLosses;
   
-              detailsListPlayers.push({
-                id: player.id,
-                nickname: player.name,
-                accountId: player.accountId,
-                summonerLevel: player.summonerLevel,
-                profileIconId: player.profileIconId,
-                summonerId: player.summonerId,
-                wins: totalWins,
-                losses: totalLosses,
-              })
+              
+            })
+            detailsListPlayers.push({
+              id: player.id,
+              nickname: player.name,
+              accountId: player.accountId,
+              summonerLevel: player.summonerLevel,
+              profileIconId: player.profileIconId,
+              summonerId: player.summonerId,
+              wins: totalWins,
+              losses: totalLosses,
             })
           } else {
             detailsListPlayers.push({
