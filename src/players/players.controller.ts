@@ -47,7 +47,7 @@ export class PlayersController {
     @HttpCode(200)
     async deletePlayerById(
        @Param('id') id:string
-    ): Promise<String> {
+    ): Promise<ReturnUserDto> {
         return this.playersService.deletePlayerById(id)
     }
 }
