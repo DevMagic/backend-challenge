@@ -1,306 +1,125 @@
-<img src='https://devmagic.com.br/wp-content/uploads/2020/07/logo_footer.png'>
+# Challenge - Developer Backend | DevMagic |
 
-# Challenge - Developer Backend
+O desafio é construir uma API Rest que seja capaz de cadastrar, buscar, atualizar e apagar os jogadores. 
+Ela deverá ser capaz de consultar a Api da Riot Games para trazer os dados dos jogadores que serão cadastrados em uma base de dados.
 
-O desafio é construir uma API Rest que seja capaz de cadastrar, buscar, atualizar e apagar os jogadores. Ela deverá ser capaz de consultar a <a href='https://developer.riotgames.com/'>Api da Riot Games</a> para trazer os dados dos jogadores que serão cadastrados em uma base de dados.
+## Instalação
 
-Lista dos jogadores a serem cadastrados:
+Use o gerenciador de pacotes [yarn](https://yarnpkg.com/getting-started/install) ou [npm](https://www.npmjs.com/get-npm) para instalar todas dependencias.
 
-- OldWolfKing
-- Praymer
-- ThrekSor
-- AndrewDiass
-- BiliBoss
-- DartSecond
-- Devils Advocate
-- Gabrvxo
-- theKovac
-- zRabelo
+Abra o projeto na pasta raiz e execute os comandos.
 
-<br>
+### yarn
 
-## <a href='https://developer.riotgames.com/'>API League of Legends</a>
-
-<br>
-
-Para consumir a API é necessário criar uma conta na plataforma e ler a documentação. Os endpoints que serão usados nesse projeto requerem autenticação e é possivel gerar um token com tempo de expiração para poder estar consumindo esse serviço.
-
-## Challenge Accepted</a>
-
-Deve ser construída uma tabela chamada Summoner no banco de dados com essas colunas:
-
-| Id  | Nickname      | AccountId       | SummonerLevel | ProfileIconId | SummonerId         |
-| --- | ------------- | --------------- | ------------- | ------------- | ------------------ |
-| 1   | Old Wolf King | V94KgBnbbsaR4I4 | 100           | 4864          | OtaV_QBRbtzt7DtpZn |
-| 2   | Wolf Old King | bsaR4I4V94KgBnb | 150           | 4684          | FtaZ_QBRbtzt7DtpZn |
-| 3   | King Old Wolf | 4I4V94KgbsaRBnb | 500           | 4648          | GtaT_QBRbtzt7DtpZn |
-
-<br>
-
-### **CRIAR JOGADOR**
-
-<br>
-
-Deve possuir uma rota **POST** para cadastrar um JOGADOR. Deverá receber os seguintes dados no corpo da requisição:
-
-_Body_
-
-```javascript
-{
-	"summonerName":"OldWolfKing"
-}
+```bash
+yarn
 ```
 
-A rota deve consumir o **SummonerName** do corpo e usá-lo para consultar no endpoint abaixo da API riotgames as informações _AccountId_, _SummonerLevel_, _ProfileIconId_ e _Id_.
+### npm
 
-<br>
-
-```javascript
-/lol/emmnorsu/v4/summoners/by-name/{summonerName}?api_key={token}
+```bash
+npm install
 ```
 
-### **Response**
+### Docker
 
-<br>
+Assim que o comando for executado o docker compose criará containers previamente configurados.
 
-> Status Code 200
+```bash
+docker-compose up -d
 
-```javascript
-{
-    "id": "OtaV_QBRbtzt7DtXXXlXbvRjuDmDRZJ38wjbEQOqXbM",
-    "accountId": "V94KgBnbbsaR4I4MXXX4trfyvUay95h_13PCsTz6jo4ByBw",
-    "puuid": "5LwdLcx1qM2_E-1NNFTBRDgTK6oqvc3XXXmbC4gqNauImdGCIm3WM2RZLBNcIyui-sXc2Q",
-    "name": "Old Wolf King",
-    "profileIconId": 4864,
-    "revisionDate": 1613316510000,
-    "summonerLevel": 225
-}
+```
+## Aplicação
+
+Para verificar se tudo está ocorrendo normalmente pode executar o seguinte comando: 
+
+```bash
+docker logs summonerapi -f
+
+```
+### Acessar Documentação ( Imagem 1.2 )
+
+#### Contém todo o fluxo da aplicação configurado para realizar os testes
+
+Basta entrar em um navegador de sua preferência e acessar a seguinte rota:
+
+```bash
+http://localhost:3333/api-docs/
+
+```
+### Executar testes unitários e de integração ( Imagem 1.1 )
+
+#### Crie uma nova base de dados dentro do container "database_summoner"
+
+"Você pode usar um gerenciador de banco de dados" (ex: beekeeper studio)
+
+```sql
+create database summonerdb_test
+
 ```
 
-E com esses dados fazer o cadastro do jogador no banco de dados.
+#### Executar os testes com o seguinte comando:
 
-_O ID do jogador pode ser tanto UUID ou numérico incremental_
+```bash
+yarn test
 
-<br>
-
-### **LISTAR JOGADORES**
-
-<br>
-
-Deve possuir uma rota **GET** para listar as informações da tabela **Summoner**, modelo esperado do retorno abaixo:
-
-### **Response**
-
-<br>
-
-> Status Code 200
-
-```javascript
-[
-  {
-    id: "1",
-    nickname: "Old Wolf King",
-    accountId: "V94KgBnbbsaR4I4",
-    summonerLevel: "100",
-    profileIconId: "4864",
-    summonerId: "V94KgBnbbsaR4I4",
-  },
-  {
-    id: "2",
-    nickname: "Old Wolf King",
-    accountId: "bsaR4I4V94KgBnb",
-    summonerLevel: "150",
-    profileIconId: "4684",
-    summonerId: "V94KgBnbbsaR4I4",
-  },
-  {
-    id: "3",
-    nickname: "Old Wolf King",
-    accountId: "4I4V94KgbsaRBnb",
-    summonerLevel: "500",
-    profileIconId: "4648",
-    summonerId: "V94KgBnbbsaR4I4",
-  },
-];
 ```
 
-### **LISTAR INFORMAÇÕES DETALHADAS DOS JOGADORES**
+#### ou
 
-<br>
+```bash
+npm run test
 
-Deve possuir uma rota **GET** que além de trazer as informações da tabela, irá trazer as quantidades de vitórias e derrotas de cada jogador:
-
-### **Response**
-
-<br>
-
-> Status Code 200
-
-```javascript
-[
-  {
-    id: "1",
-    nickname: "Old Wolf King",
-    accountId: "V94KgBnbbsaR4I4",
-    summonerLevel: "100",
-    profileIconId: "4864",
-    summonerId: "V94KgBnbbsaR4I4",
-    wins: 2,
-    losses: 100,
-  },
-  {
-    id: "2",
-    nickname: "Old Wolf King",
-    accountId: "bsaR4I4V94KgBnb",
-    summonerLevel: "150",
-    profileIconId: "4684",
-    summonerId: "V94KgBnbbsaR4I4",
-    wins: 12,
-    losses: 3,
-  },
-  {
-    id: "3",
-    nickname: "Old Wolf King",
-    accountId: "4I4V94KgbsaRBnb",
-    summonerLevel: "500",
-    profileIconId: "4648",
-    summonerId: "V94KgBnbbsaR4I4",
-    wins: 7,
-    losses: 7,
-  },
-];
 ```
 
-Para trazer essas informações, consuma o endpoint da riotgames abaixo, ele retorna um array de objetos com os dados de um jogador com base no **encryptedSummonerId** enviado e cada objeto possui as propriedades _wins_ e _losses_:
+## Observações
 
-```javascript
-/lol/league/v4/entries/by-summoner/{encryptedSummonerId}?api_key={token}
+### Testes unitários
+
+Os testes unitários são feitos utilizando armazenamento em mémoria.
+
+### Testes de integração
+
+Outra base de dados foi criada para não fazer os testes de integração em uma base de dados que seria em produção, assim criando uma de teste.
+
+### Testando aplicação com swagger
+
+Toda configuração foi feita com swagger para possibilitar testar os endpoints da aplicação de uma forma mais fácil e visual, com todas as explicações necessárias em cada uma.
+
+### API KEY
+
+Provavelmente a "API KEY" vai estar expirada, você pode gerar uma através da sua conta na RIOT e modificar nos arquivos:
+
+```bash
+.env
+./src/config/jestSetup.ts
 ```
 
-_response_
+" Estes dois arquivos somente foram upados para o github para não gerar complicações quando a aplicação estiver em teste"
 
-```javascript
-[
-  {
-    leagueId: "469c392c-063c-XXbca8-6c4c7c4d21d4",
-    queueType: "RANKED_SOLO_5x5",
-    tier: "SILVER",
-    rank: "I",
-    summonerId: "OtaV_QBRbtzt7DtpZnLXXXbvRjuDmDRZJ38wjbEQOqXbM",
-    summonerName: "Old Wolf King",
-    leaguePoints: 39,
-    wins: 12,
-    losses: 3,
-    veteran: false,
-    inactive: false,
-    freshBlood: false,
-    hotStreak: false,
-  },
-  {
-    leagueId: "0f276adb-9984-XXfdc-7d5fc5fc35d5",
-    queueType: "RANKED_FLEX_SR",
-    tier: "SILVER",
-    rank: "I",
-    summonerId: "OtaV_QBRbtzt7DtpZXXbvRjuDmDRZJ38wjbEQOqXbM",
-    summonerName: "Old Wolf King",
-    leaguePoints: 8,
-    wins: 7,
-    losses: 6,
-    veteran: false,
-    inactive: false,
-    freshBlood: false,
-    hotStreak: false,
-  },
-];
-```
+## Anexos
 
-Deve ser feito a somatória das vitórias e derrotas de cada objeto do array, lembrando que deve ser executado para cada jogador da tabela.
+### 1.1 Testes - Unitários e Integração
 
-### **ATUALIZAR JOGADOR**
+<img height="350em" src="https://lh5.googleusercontent.com/2h7-9cbnTXkqwBkbdgyzJ9dQY985cmMNLovgiQnSS2Ge9_UiBKSi9WUdZXqL77foyuuBvrtwZqq09HPuP2gu=w1920-h976-rw" />
 
-<br>
+### 1.2 Swagger (Interface)
 
-Deve possuir uma rota *PUT* para atualizar somente o **summonerName** e **summonerLevel** do jogador através do ID:
+<img height="350em" src="https://lh3.googleusercontent.com/PrzOS0lHTAJAS6xpCDOVBLuKE0XVdkPEwt4SC0rAxu7IAgm8imI_3oMBwXKlYF7Yb92mMAV4WtA-KFggInpt=w1920-h976-rw" />
 
-_Body_
+## Principais dependências
 
-```javascript
-{
-  "summonerName":"OldWolfKingMaster",
-  "summonerLevel": 550
-}
-```
-
-### **Response**
-
-<br>
-
-> Status Code 200
-
-```javascript
-{
-    "id": "OtaV_QBRbtzt7DtXXXlXbvRjuDmDRZJ38wjbEQOqXbM",
-    "accountId": "V94KgBnbbsaR4I4MXXX4trfyvUay95h_13PCsTz6jo4ByBw",
-    "puuid": "5LwdLcx1qM2_E-1NNFTBRDgTK6oqvc3XXXmbC4gqNauImdGCIm3WM2RZLBNcIyui-sXc2Q",
-    "name": "OldWolfKingMaster",
-    "profileIconId": 4864,
-    "revisionDate": 1613316510000,
-    "summonerLevel": 550
-}
-```
-
-### **APAGAR JOGADOR**
-
-<br>
-
-Deve possuir uma rota *DELETE* para apagar o jogador através do ID:
-
-### **Response**
-
-<br>
-
-> Status Code 200
-
-```javascript
-{
-    "message": "successfully deleted"
-}
-```
-
-## Requisitos
-
-API deve ser desenvolvida em NodeJs.
-
-## Avaliação
-
-Você será avaliado pela usabilidade, por respeitar o design e pela arquitetura da API.
-
-* Uso do Git
-* Arquitetura da API
-* Diferencial: NestJS ou Postgres
-* A qualidade do código
-* As decisões que você fez para resolver o desafio
-* Tratamento de erros
-
-## *Como participar?*
-
-- Farça um fork deste repositório;
-- Clone seu fork na sua máquina;
-- Crie um novo branch com o seguinte padrão "challenge/seu-nome";
-- Resolva o desafio;
-- Faça uma PR para este repositório com instruções claras de como executar seu código.
-
-Sua PR será avaliada e lhe daremos um feedback o mais rápido possível.
+- [Typescript](https://www.typescriptlang.org/) - TypeScript é um superconjunto de JavaScript desenvolvido pela Microsoft que adiciona tipagem e alguns outros recursos a linguagem
+- [Node.js](https://nodejs.org/en/) - Node.js é um software de código aberto, multiplataforma, que executa códigos JavaScript no backend
+- [Express](https://expressjs.com/) - Express.js é um framework para otimizar a construção de aplicações web e API's.
+- [Axios](https://github.com/axios/axios) - Axios é um cliente HTTP baseado em Promises para fazer requisições.
+- [Docker](https://www.docker.com/) - Docker é um conjunto de produtos de plataforma como serviço que usam virtualização de nível de sistema operacional para entregar software em pacotes chamados contêineres.
+- [TypeORM](https://typeorm.io/) - TypeORM é um ORM (Mapeamento objeto-relacional) que ajuda desenvolver qualquer tipo de aplicativo que use bancos de dados.
+- [Jest](https://jestjs.io) - Jest é uma estrutura de teste de JavaScript mantida pelo Facebook.
+- [ESlint](https://eslint.org/) - O ESLint analisa estaticamente seu código para encontrar problemas rapidamente.
+- [Prettier](https://prettier.io/) - Um formatador de código opinativo.
 
 
-## FAQ
 
-> ### Posso utilizar frameworks/bibliotecas?
-> *Resposta:* Não só pode como será um diferencial
 
-> ### Quanto tempo tenho ?
-> *Resposta:* Esperamos sua resposta em até 7 dias
-
-> ### Qual banco de dados ?
-> *Resposta:* Qualquer um, sendo o Postgres ou Mongodb um diferencial
 

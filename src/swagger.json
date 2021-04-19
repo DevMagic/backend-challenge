@@ -1,0 +1,223 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Challenge - Developer Backend",
+    "description": "The challenge is to build a Rest API that is able to register, search, update and delete players.",
+    "version": "0.0.1",
+    "contact": {
+      "name": "André Araujo",
+      "email": "andrearaujo.contact@gmail.com",
+      "url": "https://andrearaujo.vercel.app/"
+    }
+  },
+  "paths": {
+    "/player": {
+      "post": {
+        "tags": ["Player"],
+        "summary": "Create Player",
+        "description": "Create a new player and save to the database",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "summonerName": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "summonerName": "Praymer"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "successfully created!"
+          },
+          "400": {
+            "description": "Player already exists"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/player/{id}": {
+      "put": {
+        "tags": ["Player"],
+        "summary": "Update Player",
+        "description":"Updates an existing user in the database",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Player id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "summonerName": {
+                    "type": "string"
+                  },
+                  "summonerLevel": {
+                    "type": "number"
+                  }
+                },
+                "example": {
+                  "summonerName": "OldWolfKingMaster",
+                  "summonerLevel": 550
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successfully updated!"
+          },
+          "400": {
+            "description": "Player does not exists!"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Player"],
+        "summary": "Delete Player",
+        "description":"Delete an existing user in the database",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Player id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully deleted!"
+          },
+          "400": {
+            "description": "Player does not exists!"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/player/all":{
+      "get": {
+        "tags": ["Player"],
+        "summary": "List all players",
+        "description": "Lists all players in the database",
+        "responses": {
+          "200": {
+            "description": "successfully listed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "nickname": {
+                        "type": "string"
+                      },
+                      "accountId": {
+                        "type": "string"
+                      },
+                      "summonerLevel": {
+                        "type": "number"
+                      },
+                      "profileIconId": {
+                        "type": "number"
+                      },
+                      "summonerId": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/player/all/detailed":{
+      "get": {
+        "tags": ["Player"],
+        "summary": "Lists all players with details",
+        "description": "Lists all players in the database including win and loss information taken from the riot api",
+        "responses": {
+          "200": {
+            "description": "successfully listed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "nickname": {
+                        "type": "string"
+                      },
+                      "accountId": {
+                        "type": "string"
+                      },
+                      "summonerLevel": {
+                        "type": "number"
+                      },
+                      "profileIconId": {
+                        "type": "number"
+                      },
+                      "summonerId": {
+                        "type": "string"
+                      },
+                      "wins": {
+                        "type": "number"
+                      },
+                      "losses": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  }
+}
