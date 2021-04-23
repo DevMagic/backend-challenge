@@ -45,4 +45,39 @@ export class PlayerService {
   async findAll(): Promise<Summoner[]> {
     return this.summonerRepository.find();
   }
+
+  async winsAndLoses({ summonerId }) {
+    const playerHist = await this.httpService
+      .get(
+        `https://br1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerId}?api_key=${process.env.RIOT_KEY}`,
+      )
+      .toPromise()
+      .then((res) => res.data)
+      .catch((err) => {
+        console.log(err);
+        throw err;
+      });
+    let wins = 0;
+    let loses = 0;
+    playerHist.map((typeGame) => {
+      wins += typeGame.wins;
+      loses += typeGame.losses;
+    });
+    return { wins, loses };
+  }
+
+  async update({ id, summonerName, summonerLevel }) {
+    await this.summonerRepository.update(id, {
+      Nickname: summonerName,
+      SummonerLevel: summonerLevel,
+    });
+    const updatedSummoner = await this.summonerRepository.findOne({ id });
+
+    return updatedSummoner;
+  }
+
+  async delete({ id }): Promise<string> {
+    this.summonerRepository.delete({ id: id });
+    return 'successfully deleted';
+  }
 }
