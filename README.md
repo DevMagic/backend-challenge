@@ -44,80 +44,80 @@ $ npm run / yarn start:prod
 
 GET /players
 ```json
-	[  
-    {
-      "id": 4,
-      "Nickname": "Old Wolf King",
-      "AccountId": "zhN5_VnaVVzana_2l6AgVJDrqYokdN5vts_asdvjbhjasdvh",
-      "SummonerLevel": 234,
-      "ProfileIconId": "3534",
-      "SummonerId": "WcX8ZXkamtRoGfIKMjBtvEBe89ds8Alc8Hsvaioniosa"
-   	}
-	]
+[  
+  {
+    "id": 4,
+    "Nickname": "Old Wolf King",
+    "AccountId": "zhN5_VnaVVzana_2l6AgVJDrqYokdN5vts_asdvjbhjasdvh",
+    "SummonerLevel": 234,
+    "ProfileIconId": "3534",
+    "SummonerId": "WcX8ZXkamtRoGfIKMjBtvEBe89ds8Alc8Hsvaioniosa"
+  }
+]
 ```
 
 GET /players/details
 ```json
-	[  
-    {
-      "id": 4,
-      "Nickname": "Old Wolf King",
-      "AccountId": "zhN5_VnaVVzana_2l6AgVJDrqYokdN5vts_asdvjbhjasdvh",
-      "SummonerLevel": 234,
-      "ProfileIconId": "3534",
-      "SummonerId": "WcX8ZXkamtRoGfIKMjBtvEBe89ds8Alc8Hsvaioniosa",
-      "wins": 37,
-      "loses": 25
-    }
-	]
+[  
+  {
+    "id": 4,
+    "Nickname": "Old Wolf King",
+    "AccountId": "zhN5_VnaVVzana_2l6AgVJDrqYokdN5vts_asdvjbhjasdvh",
+    "SummonerLevel": 234,
+    "ProfileIconId": "3534",
+    "SummonerId": "WcX8ZXkamtRoGfIKMjBtvEBe89ds8Alc8Hsvaioniosa",
+    "wins": 37,
+    "loses": 25
+  }
+]
 ```
 
 POST /players 
 send:
 ```json
-	{
-		"summonerName":"OldWolfKing"
-	}
+{
+  "summonerName":"OldWolfKing"
+}
 ```
 
 return:
 ```json
-	{
-    "id": "WcX8ZXkamtRoGfIKMjBtvEBe89ds8Alc8Hsvaioniosa",
-    "accountId": "zhN5_VnaVVzana_2l6AgVJDrqYokdN5vts_asdvjbhjasdvh",
-    "puuid": "BEiwuSmwRbqtoLivzi00KTE4mPqgyw4Z3HjeFjifnJvIj2H7qEgcd459_vTajNj_cdvsjbjh72dvds",
-    "name": "Old Wolf King",
-    "profileIconId": 3534,
-    "summonerLevel": 234
-  }
+{
+  "id": "WcX8ZXkamtRoGfIKMjBtvEBe89ds8Alc8Hsvaioniosa",
+  "accountId": "zhN5_VnaVVzana_2l6AgVJDrqYokdN5vts_asdvjbhjasdvh",
+  "puuid": "BEiwuSmwRbqtoLivzi00KTE4mPqgyw4Z3HjeFjifnJvIj2H7qEgcd459_vTajNj_cdvsjbjh72dvds",
+  "name": "Old Wolf King",
+  "profileIconId": 3534,
+  "summonerLevel": 234
+}
 ```
 
 PUT /players/:id
 send:
 ```json
-	{
-    "summonerName":"OldWolfKingMaster",
-    "summonerLevel": 300
-  }
+{
+  "summonerName":"OldWolfKingMaster",
+  "summonerLevel": 300
+}
 ```
 
 return:
 ```json
-	{
-    "id": 3,
-    "Nickname": "OldWolfKingMaster",
-    "AccountId": "zhN5_VnaVVzana_2l6AgVJDrqYokdN5vts_asdvjbhjasdvh",
-    "SummonerLevel": 300,
-    "ProfileIconId": "3534",
-    "SummonerId": "WcX8ZXkamtRoGfIKMjBtvEBe89ds8Alc8Hsvaioniosa"
-  }
+{
+  "id": 3,
+  "Nickname": "OldWolfKingMaster",
+  "AccountId": "zhN5_VnaVVzana_2l6AgVJDrqYokdN5vts_asdvjbhjasdvh",
+  "SummonerLevel": 300,
+  "ProfileIconId": "3534",
+  "SummonerId": "WcX8ZXkamtRoGfIKMjBtvEBe89ds8Alc8Hsvaioniosa"
+}
 ```
 
 
 DELETE /players/:id
 return:
 ```json
-	{
-    "message": "successfully deleted"
-  }
+{
+  "message": "successfully deleted"
+}
 ```
