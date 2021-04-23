@@ -10,9 +10,7 @@
   <li>Dentro desse arquivo é necessário configurar duas variáveis ambiente:</li>
 
   - \[ ] PORT (porta que o projeto irá usar);
-
   <br>
-  
  - \[ ] RIOT_KEY (key de desenvolvedor da <a href="https://developer.riotgames.com/" target="_blank">riot games</a>).
 
   <li>Outro detalhe que é importante destacar é que a porta 5432 de seu computador precisa estar livre, pois se não poderá ocorrer erro ao iniciar o docker com o banco de dados</li>
