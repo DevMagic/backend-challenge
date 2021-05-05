@@ -5,12 +5,14 @@ services:
     build: .
     image: nest
     container_name: api
+    restart: always
     ports:
       - '3000:3000'
     volumes:
-      - api-logs:/usr/src/node-api/logs:rw
+      - ./logs:/usr/src/DevMagic/logs:rw
+      - .:/usr/src/DevMagic
     environment:
-      - NODE_ENV=${NODE_ENV}
+      - NODE_ENV=$NODE_ENV
     depends_on:
       - pgsql
   pgsql:
