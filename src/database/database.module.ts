@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -8,7 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: function (configService: ConfigService): {} {
-        return ({
+        return {
           type: 'postgres',
           host: configService.get('TYPEORM_HOST'),
           port: configService.get('TYPEORM_PORT'),
@@ -21,7 +21,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
             migrationsDir: __dirname + '/migration/',
           },
           synchronize: true,
-        });
+        };
       },
     }),
   ],

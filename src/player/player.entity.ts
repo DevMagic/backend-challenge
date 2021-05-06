@@ -1,13 +1,13 @@
+import { Exclude } from 'class-transformer';
 import {
-  Entity,
-  Unique,
   BaseEntity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { Exclude } from 'class-transformer';
 
 @Entity('player')
 @Unique(['id', 'nickname', 'accountId', 'profileIconId', 'summonerId'])
@@ -22,14 +22,14 @@ export class Player extends BaseEntity {
   @Column({ nullable: false, type: 'varchar', length: 56 })
   accountId: string;
 
-  @Column({nullable: false, type: 'bigint'})
+  @Column({ nullable: false, type: 'bigint' })
   summonerLevel: number;
 
-  @Column({nullable: false})
+  @Column({ nullable: false })
   profileIconId: number;
 
   //Encrypted summoner ID. Max length 63 characters.
-  @Column({ nullable: false, type: 'varchar', length: 63})
+  @Column({ nullable: false, type: 'varchar', length: 63 })
   summonerId: string;
 
   @CreateDateColumn()

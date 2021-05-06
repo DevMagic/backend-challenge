@@ -1,9 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  HttpService,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreatePlayerDto } from './dtos/player.create.dto';
 import { UpdatePlayerDto } from './dtos/player.update.dto';
@@ -34,10 +29,7 @@ export class PlayerService {
    * @param updatePlayerDto
    * @returns updated player
    */
-  async update(
-    id: string,
-    updatePlayerDto: UpdatePlayerDto,
-  ): Promise<Player> {
+  async update(id: string, updatePlayerDto: UpdatePlayerDto): Promise<Player> {
     return this.playerRepository.updatePlayer(id, updatePlayerDto);
   }
 

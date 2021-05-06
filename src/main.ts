@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { WinstonModule } from 'nest-winston';
-import { winstonConfig } from './configs/winston.config';
+import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
-import { SwaggerModule, DocumentBuilder, SwaggerDocumentOptions } from '@nestjs/swagger';
+import { WinstonModule } from 'nest-winston';
+import { AppModule } from './app.module';
+import { winstonConfig } from './configs/winston.config';
 
 dotenv.config();
 
@@ -12,11 +12,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger });
   const config = new DocumentBuilder()
     .setTitle('The DevMagic API')
-    .setDescription('Api to manage riot games summoners')
+    .setDescription('API Rest able to register, search, update and delete players, using queries to Api from Riot Games to bring the data of the players that will be registered in a database.')
     .setVersion('1.0')
     .build();
   const options: SwaggerDocumentOptions = {
-    operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
+    operationIdFactory: (_controllerKey: string, methodKey: string) => methodKey,
   };
   const document = SwaggerModule.createDocument(app, config, options);
   SwaggerModule.setup('api', app, document);

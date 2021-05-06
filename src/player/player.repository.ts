@@ -3,8 +3,8 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { RiotPlayerApi, RiotPlayerHistoryApi } from '../configs/axios.api';
 import { EntityRepository, Repository } from 'typeorm';
+import { RiotPlayerApi, RiotPlayerHistoryApi } from '../configs/axios.api';
 import { CreatePlayerDto } from './dtos/player.create.dto';
 import { UpdatePlayerDto } from './dtos/player.update.dto';
 import { Player } from './player.entity';
@@ -16,9 +16,7 @@ export class PlayerRepository extends Repository<Player> {
    * @param createPlayerDto
    * @returns player
    */
-  async createPlayer(
-    createPlayerDto: CreatePlayerDto,
-  ): Promise<Player> {
+  async createPlayer(createPlayerDto: CreatePlayerDto): Promise<Player> {
     const { summonerName } = createPlayerDto;
 
     const player = await this.getRiotPlayer(summonerName);
@@ -61,7 +59,7 @@ export class PlayerRepository extends Repository<Player> {
     if (players === []) {
       throw new NotFoundException('Players not found');
     } else {
-      return players; 
+      return players;
     }
   }
 
@@ -85,9 +83,7 @@ export class PlayerRepository extends Repository<Player> {
       const listPlayerWithWinsLosses = await Promise.all(
         players.map(
           async (player): Promise<Player> => {
-            const { wins, losses } = await this.getWinsLoses(
-              player.summonerId,
-            );
+            const { wins, losses } = await this.getWinsLoses(player.summonerId);
             player['wins'] = wins;
             player['losses'] = losses;
             return player;
@@ -110,9 +106,9 @@ export class PlayerRepository extends Repository<Player> {
     updatePlayerDto: UpdatePlayerDto,
   ): Promise<Player> {
     const { summonerName, summonerLevel } = updatePlayerDto;
-    
+
     var player;
-    
+
     try {
       player = await this.findOne(id);
     } catch (error) {
@@ -149,10 +145,11 @@ export class PlayerRepository extends Repository<Player> {
     summonerId: string,
   ): Promise<{ wins: number; losses: number }> {
     try {
-      const RiotPlayer = await RiotPlayerHistoryApi.get(`/${summonerId}`)
-        .then((res): any => {
+      const RiotPlayer = await RiotPlayerHistoryApi.get(`/${summonerId}`).then(
+        (res): any => {
           return res.data;
-        })
+        },
+      );
       return this.mapRiotPlayerHistory(RiotPlayer);
     } catch (error) {
       throw new InternalServerErrorException(
@@ -166,10 +163,7 @@ export class PlayerRepository extends Repository<Player> {
    * @param createPlayerDto
    * @returns Player
    */
-  private async getRiotPlayer(
-    summonerName: String,
-  ): Promise<Player> {
-  
+  private async getRiotPlayer(summonerName: String): Promise<Player> {
     let RiotPlayer;
     try {
       RiotPlayer = await RiotPlayerApi.get(`/${summonerName}`).then(
@@ -178,13 +172,10 @@ export class PlayerRepository extends Repository<Player> {
         },
       );
     } catch (error) {
-      throw new NotFoundException(
-        `Error getting player data from Riot Games.`,
-      );
+      throw new NotFoundException(`Error getting player data from Riot Games.`);
     }
     if (RiotPlayer) {
-
-      if(await this.findOne({where: {nickname: RiotPlayer.name}})){
+      if (await this.findOne({ where: { nickname: RiotPlayer.name } })) {
         throw new ConflictException('Nickname is already in use');
       }
 

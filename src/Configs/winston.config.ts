@@ -1,6 +1,6 @@
 import {
   utilities as nestWinstonModuleUtilities,
-  WinstonModuleOptions,
+  WinstonModuleOptions
 } from 'nest-winston';
 import * as winston from 'winston';
 
