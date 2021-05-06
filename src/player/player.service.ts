@@ -5,48 +5,48 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateSummonerDto } from './dtos/summoner.create.dto';
-import { UpdateSummonerDto } from './dtos/summoner.update.dto';
-import { Summoner } from './summoner.entity';
-import { SummonerRepository } from './summoner.repository';
+import { CreatePlayerDto } from './dtos/player.create.dto';
+import { UpdatePlayerDto } from './dtos/player.update.dto';
+import { Player } from './player.entity';
+import { PlayerRepository } from './player.repository';
 
-type Summoners = Promise<Summoner[]>;
+type Players = Promise<Player[]>;
 
 @Injectable()
-export class SummonerService {
+export class PlayerService {
   constructor(
-    @InjectRepository(SummonerRepository)
-    private summonerRepository: SummonerRepository,
+    @InjectRepository(PlayerRepository)
+    private summonerRepository: PlayerRepository,
   ) {}
 
   /**
    * Creates summoner service
-   * @param createSummonerDto
+   * @param createPlayerDto
    * @returns created summoner
    */
-  async create(createSummonerDto: CreateSummonerDto): Promise<Summoner> {
-    return this.summonerRepository.createSummoner(createSummonerDto);
+  async create(createPlayerDto: CreatePlayerDto): Promise<Player> {
+    return this.summonerRepository.createPlayer(createPlayerDto);
   }
 
   /**
    * Updates summoner service
    * @param id
-   * @param updateSummonerDto
+   * @param updatePlayerDto
    * @returns updated summoner
    */
   async update(
     id: string,
-    updateSummonerDto: UpdateSummonerDto,
-  ): Promise<Summoner> {
-    return this.summonerRepository.updateSummoner(id, updateSummonerDto);
+    updatePlayerDto: UpdatePlayerDto,
+  ): Promise<Player> {
+    return this.summonerRepository.updatePlayer(id, updatePlayerDto);
   }
 
   /**
    * Finds summoner service
    * @returns list of summoners
    */
-  async find(): Summoners {
-    return this.summonerRepository.findSummoners();
+  async find(): Players {
+    return this.summonerRepository.findPlayers();
   }
 
   /**
@@ -54,7 +54,7 @@ export class SummonerService {
    * @returns
    */
   async details(): Promise<any[]> {
-    return this.summonerRepository.findSummonerWithDetails();
+    return this.summonerRepository.findPlayerWithDetails();
   }
   /**
    * Deletes summoner service

@@ -9,9 +9,9 @@ import {
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
-@Entity('summoner ')
+@Entity('player')
 @Unique(['id', 'nickname', 'accountId', 'profileIconId', 'summonerId'])
-export class Summoner extends BaseEntity {
+export class Player extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

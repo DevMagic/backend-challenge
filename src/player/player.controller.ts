@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   ClassSerializerInterceptor,
   Controller,
@@ -11,27 +12,29 @@ import {
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
-import { CreateSummonerDto } from './dtos/summoner.create.dto';
-import { UpdateSummonerDto } from './dtos/summoner.update.dto';
-import { Summoner } from './summoner.entity';
-import { SummonerService } from './summoner.service';
+import { ApiTags } from '@nestjs/swagger';
+import { CreatePlayerDto } from './dtos/player.create.dto';
+import { UpdatePlayerDto } from './dtos/player.update.dto';
+import { Player } from './player.entity';
+import { PlayerService } from './player.service';
 
-@Controller('summoners')
-export class SummonerController {
-  constructor(private summonerService: SummonerService) {}
+@ApiTags('Player')
+@Controller('players')
+export class PlayerController {
+  constructor(private summonerService: PlayerService) {}
 
   /**
    * Posts summoners controller
    * @param createUserDto
-   * @returns summoner
+   * @returns player
    */
   @Post('/create')
   @UseInterceptors(ClassSerializerInterceptor)
-  @HttpCode(200)
-  async createSummoner(
+  @HttpCode(201)
+  async createPlayer(
     @Body(new ValidationPipe({ transform: true }))
-    createUserDto: CreateSummonerDto,
-  ): Promise<Summoner> {
+    createUserDto: CreatePlayerDto,
+  ): Promise<Player> {
     return await this.summonerService.create(createUserDto);
   }
 
@@ -42,46 +45,45 @@ export class SummonerController {
   @Get('/')
   @UseInterceptors(ClassSerializerInterceptor)
   @HttpCode(200)
-  async showSummoners(): Promise<any[]> {
+  async showPlayers(): Promise<any[]> {
     return await this.summonerService.find();
   }
 
   /**
    * Gets summoners controller
-   * @returns details summoner
+   * @returns details player
    */
   @Get('/details')
   @UseInterceptors(ClassSerializerInterceptor)
   @HttpCode(200)
-  async showDetailsSummoner(): Promise<any[]> {
+  async showPlayerDetails(): Promise<any[]> {
     return await this.summonerService.details();
   }
 
   /**
    * Puts summoners controller
    * @param id
-   * @param updateSummonerDto
-   * @returns summoner
+   * @param updatePlayerDto
+   * @returns player
    */
   @Put('/edit/:id')
   @HttpCode(200)
   @UseInterceptors(ClassSerializerInterceptor)
-  async editSummoner(
+  async editPlayer(
     @Param('id') id: string,
-    @Body(ValidationPipe) updateSummonerDto: UpdateSummonerDto,
-  ): Promise<Summoner> {
-    return await this.summonerService.update(id, updateSummonerDto);
+    @Body(ValidationPipe) updatePlayerDto: UpdatePlayerDto,
+  ): Promise<Player> {
+    return await this.summonerService.update(id, updatePlayerDto);
   }
 
   /**
    * Deletes summoners controller
    * @param id
-   * @returns summoner by id
+   * @returns player by id
    */
   @Delete('/delete/:id')
   @HttpCode(200)
-  async deleteSummonerById(@Param('id') id: string): Promise<{ message: string; }> {
+  async deletePlayer(@Param('id') id: string): Promise<{ message: string }> {
     return await this.summonerService.delete(id);
   }
 }
-

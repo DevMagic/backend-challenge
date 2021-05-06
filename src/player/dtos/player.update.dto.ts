@@ -1,6 +1,6 @@
 import { IsNotEmpty, Min, MaxLength, MinLength } from 'class-validator';
 
-export class UpdateSummonerDto {
+export class UpdatePlayerDto {
   @IsNotEmpty({
     message: 'Please enter the name of the summoner',
   })

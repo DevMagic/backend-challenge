@@ -5,7 +5,7 @@ import { WinstonModule } from 'nest-winston';
 import { typeOrmConfig } from './configs/typeorm.config';
 import { winstonConfig } from './configs/winston.config';
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
-import { SummonerModule } from './player/summoner.module';
+import { PlayerModule } from './player/player.module';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from '@hapi/joi';
 import { DatabaseModule } from './database/database.module';
@@ -27,7 +27,7 @@ import { DatabaseModule } from './database/database.module';
     }),
     DatabaseModule,
     WinstonModule.forRoot(winstonConfig),
-    SummonerModule,
+    PlayerModule,
   ],
   controllers: [],
   providers: [
