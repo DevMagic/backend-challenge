@@ -33,6 +33,13 @@ $ docker-compose up -d --build
 A aplicação será executada por default no modo de desenvolvimento: ``yarn start``
 ## Executar a aplicação localmente e o banco de dados no Docker
 Se você desejar executar a aplicação fora do Docker, siga os seguintes passos:
+
+No arquivo ```.env``` atualize o valor da variavel ```TYPEORM_HOST``` de ``pgsql`` para ``localhost``.
+
+    TYPE_ORM=pgsql -> TYPE_ORM=localhost
+
+Execute o banco de dados:
+
 ```bash
 # Executar apenas o banco de dados PostgreSql
 $ docker-compose up -d --build pgsql
@@ -74,9 +81,9 @@ A especificação da REST API para o desafio proposto está descrita abaixo:
     "summonerName": "OldWolfKing"
 }
 ```
-### curl
+### Curl
 ```bash
-curl -X 'POST' \
+Curl -X 'POST' \
     'http://localhost:3000/players/create' \
     -H 'accept: application/json' \
     -H 'Content-Type: application/json' \
@@ -105,7 +112,7 @@ curl -X 'POST' \
 `GET /players`
 
 ```bash
-curl -X 'GET' \
+Curl -X 'GET' \
     'http://localhost:3000/players' \
     -H 'accept: application/json'
 ```
@@ -143,9 +150,9 @@ curl -X 'GET' \
 
 > GET ```/players/details```
 
-### curl    
+### Curl    
 ```bash
-curl -X 'GET' \
+Curl -X 'GET' \
     'http://localhost:3000/players/details' \
     -H 'accept: application/json'
 ```
@@ -182,7 +189,7 @@ curl -X 'GET' \
 ```
 
 ## Atualizar summonerName(nickname) e summonerLevel de um jogador
-
+### Request
 > PUT  ```​/players​/edit​/{id}```
 ```json
 {
@@ -190,9 +197,9 @@ curl -X 'GET' \
   "summonerLevel": 1000
 }
 ```
-### curl
+### Curl
 ```bash
-curl -X 'PUT' \
+Curl -X 'PUT' \
 'http://localhost:3000/players/edit/2469725b-5a47-4149-9099-706d9d417d6e' \
 -H 'accept: application/json' \
 -H 'Content-Type: application/json' \
@@ -218,9 +225,9 @@ curl -X 'PUT' \
 ## Remover um jogador
 
 > PUT  ```​/players​/delete/{id}```
-### curl
+### Curl
 ```bash
-curl -X 'DELETE' \
+Curl -X 'DELETE' \
 'http://localhost:3000/players/delete/2469725b-5a47-4149-9099-706d9d417d6e' \
 -H 'accept: */*'
 ```
