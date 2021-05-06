@@ -66,7 +66,12 @@ Para acessar a documentação, em seu navegador, digite:
 
 ### Request
 
-`POST /players/create`
+> POST ```/players/create```
+```json
+{
+    "summonerName": "OldWolfKing"
+}
+```
 ### curl
 ```bash
 curl -X 'POST' \
@@ -174,46 +179,54 @@ curl -X 'GET' \
 
 ```
 
-## Obter lista de jogadores cadastrados com o somatório de vitórias e derrotas
+## Atualizar summonerName(nickname) e summonerLevel de um jogador
 
-### Request
-
-> GET ```/players/details```
-
-### curl    
-```bash
-curl -X 'GET' \
-    'http://localhost:3000/players/details' \
-    -H 'accept: application/json'
+> PUT  ```​/players​/edit​/{id}```
+```json
+{
+  "summonerName": "New nickname",
+  "summonerLevel": 1000
+}
 ```
-
+### curl
+```bash
+curl -X 'PUT' \
+'http://localhost:3000/players/edit/2469725b-5a47-4149-9099-706d9d417d6e' \
+-H 'accept: application/json' \
+-H 'Content-Type: application/json' \
+-d '{
+"summonerName": "New nickname",
+"summonerLevel": 1000
+}'
+```
 ### Response Code
-
->  200
-
+> 200
 ### Response body
 ```json
-[
-   {
-    "id": "2469725b-5a47-4149-9099-706d9d417d6e",
-    "nickname": "Old Wolf King",
-    "accountId": "mf_W08JhUo10FvvJrKZaHXpILSYl1UtHFhb0z7e_7R4CUwU",
-    "summonerLevel": "235",
-    "profileIconId": 3534,
-    "summonerId": "5dKiOH-l6JPgZL04748EMj8ZaC2xRzoviOlTOjkvdcdwL3w",
-    "wins": 37,
-    "losses": 27
-  },
-  {
-    "id": "34d9802f-ea70-4d11-b909-67b39169c10b",
-    "nickname": "BiliBoss",
-    "accountId": "M47rzUIRO1IMiCTtxv5RooQFFyoa-VcOpyXJeqWXlhk",
-    "summonerLevel": "42",
-    "profileIconId": 1398,
-    "summonerId": "6TCoxna5FGbT3j-HOVOoCdGbUffpRYR9Lwp2MfJ1ECX-",
-    "wins": 0,
-    "losses": 0
-  }
-]
+{
+  "id": "2469725b-5a47-4149-9099-706d9d417d6e",
+  "nickname": "New nickname",
+  "accountId": "mf_W08JhUo10FvvJrKZaHXpILSYl1UtHFhb0z7e_7R4CUwU",
+  "summonerLevel": 1000,
+  "profileIconId": 3534,
+  "summonerId": "5dKiOH-l6JPgZL04748EMj8ZaC2xRzoviOlTOjkvdcdwL3w"
+}
+```
 
+## Remover um jogador
+
+> PUT  ```​/players​/delete/{id}```
+### curl
+```bash
+curl -X 'DELETE' \
+'http://localhost:3000/players/delete/2469725b-5a47-4149-9099-706d9d417d6e' \
+-H 'accept: */*'
+```
+### Response Code
+> 200
+### Response body
+```json
+{
+  "message": "successfully deleted"
+}
 ```
