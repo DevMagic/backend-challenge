@@ -38,9 +38,8 @@ export class PlayerRepository extends Repository<Player> {
    * @returns players
    */
   async findPlayers(): Promise<Player[]> {
-    var players;
     try {
-      players = this.createQueryBuilder('player')
+      return await this.createQueryBuilder('player')
         .select([
           'player.id',
           'player.nickname',
@@ -55,12 +54,6 @@ export class PlayerRepository extends Repository<Player> {
         `Error when trying to get the list of players. ${error}`,
       );
     }
-
-    if (players === []) {
-      throw new NotFoundException('Players not found');
-    } else {
-      return players;
-    }
   }
 
   /**
@@ -68,7 +61,7 @@ export class PlayerRepository extends Repository<Player> {
    * @returns details
    */
   async findPlayerWithDetails(): Promise<any[]> {
-    var players;
+    var players = [];
     try {
       players = await this.find();
     } catch (error) {
@@ -77,22 +70,18 @@ export class PlayerRepository extends Repository<Player> {
       );
     }
 
-    if (players === []) {
-      throw new NotFoundException('Players not found');
-    } else {
-      const listPlayerWithWinsLosses = await Promise.all(
-        players.map(
-          async (player): Promise<Player> => {
-            const { wins, losses } = await this.getWinsLoses(player.summonerId);
-            player['wins'] = wins;
-            player['losses'] = losses;
-            return player;
-          },
-        ),
-      );
+    const listPlayerWithWinsLosses = await Promise.all(
+      players.map(
+        async (player): Promise<Player> => {
+          const { wins, losses } = await this.getWinsLoses(player.summonerId);
+          player['wins'] = wins;
+          player['losses'] = losses;
+          return player;
+        },
+      ),
+    );
 
-      return listPlayerWithWinsLosses;
-    }
+    return listPlayerWithWinsLosses;
   }
 
   /**
