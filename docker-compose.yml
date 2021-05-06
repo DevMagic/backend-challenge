@@ -1,0 +1,37 @@
+version: '3.7'
+
+services:
+  api:
+    build: .
+    image: nest
+    container_name: api
+    restart: always
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./logs:/usr/src/DevMagic/logs:rw
+      - .:/usr/src/DevMagic
+    environment:
+      - NODE_ENV=$NODE_ENV
+    depends_on:
+      - pgsql
+  pgsql:
+    image: postgres
+    container_name: 'pgsql'
+    restart: unless-stopped
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/
+    env_file: 
+      - .env
+    environment:
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - TYPEORM_USERNAME=$TYPEORM_USERNAME
+      - TYPEORM_PASSWORD=$TYPEORM_PASSWORD
+      - TYPEORM_DATABASE=$TYPEORM_DATABASE
+    ports:
+      - '5432:5432'
+
+volumes:
+  api-logs:
+  db:

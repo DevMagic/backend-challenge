@@ -4,303 +4,238 @@
 
 O desafio é construir uma API Rest que seja capaz de cadastrar, buscar, atualizar e apagar os jogadores. Ela deverá ser capaz de consultar a <a href='https://developer.riotgames.com/'>Api da Riot Games</a> para trazer os dados dos jogadores que serão cadastrados em uma base de dados.
 
-Lista dos jogadores a serem cadastrados:
+## Instalação
+Copie o arquivo ```.env.example``` para o ```.env```. 
+```bash
+$ cp .env.example .env
+```
+Instale as dependências do projeto.
+```bash
+$ yarn install
 
-- OldWolfKing
-- Praymer
-- ThrekSor
-- AndrewDiass
-- BiliBoss
-- DartSecond
-- Devils Advocate
-- Gabrvxo
-- theKovac
-- zRabelo
+# ou
 
-<br>
+$ npm install
+```
+Antes de proseguir para o proximo passo, copie o arquivo ```.env.example``` para o ```.env```. 
+```bash
+$ cp .env.example .env
+```
 
-## <a href='https://developer.riotgames.com/'>API League of Legends</a>
+Feito isso, edite os valores das variáveis de ambiente para os valores desejados.
 
-<br>
+Na variável ```RIOT_KEY``` adicione o seu token obtido na <a href='https://developer.riotgames.com/'>API League of Legends</a>.
+## Executar a aplicação e banco de dados dentro do Docker
+Para executar todo o projeto dentro do docker, apenas execute, no terminal, o seguinte comando:
+```bash
+$ docker-compose up -d --build
+```
+A aplicação será executada por default no modo de desenvolvimento: ``yarn start``
+## Executar a aplicação localmente e o banco de dados no Docker
+Se você desejar executar a aplicação fora do Docker, siga os seguintes passos:
 
-Para consumir a API é necessário criar uma conta na plataforma e ler a documentação. Os endpoints que serão usados nesse projeto requerem autenticação e é possivel gerar um token com tempo de expiração para poder estar consumindo esse serviço.
+No arquivo ```.env``` atualize o valor da variavel ```TYPEORM_HOST``` de ``pgsql`` para ``localhost``.
 
-## Challenge Accepted</a>
+    TYPE_ORM=pgsql -> TYPE_ORM=localhost
 
-Deve ser construída uma tabela chamada Summoner no banco de dados com essas colunas:
+Execute o banco de dados:
 
-| Id  | Nickname      | AccountId       | SummonerLevel | ProfileIconId | SummonerId         |
-| --- | ------------- | --------------- | ------------- | ------------- | ------------------ |
-| 1   | Old Wolf King | V94KgBnbbsaR4I4 | 100           | 4864          | OtaV_QBRbtzt7DtpZn |
-| 2   | Wolf Old King | bsaR4I4V94KgBnb | 150           | 4684          | FtaZ_QBRbtzt7DtpZn |
-| 3   | King Old Wolf | 4I4V94KgbsaRBnb | 500           | 4648          | GtaT_QBRbtzt7DtpZn |
+```bash
+# Executar apenas o banco de dados PostgreSql
+$ docker-compose up -d --build pgsql
+```
+Aguarde o download, configuração e execução do banco de dados PostgreSql no Docker. 
 
-<br>
+Após isso, execute a aplicação no modo desejado:
+```bash
+# Executar a aplição no modo de desenvolvimento
+$ (npm run | yarn) start
 
-### **CRIAR JOGADOR**
+# Executar a aplição no modo de desenvolvimento com monitoramento de modificações em arquivos
+$ (npm run | yarn) start:dev
 
-<br>
+# Executar a aplição no modo de produção
+$ (npm run | yarn) start:prod
+```
 
-Deve possuir uma rota **POST** para cadastrar um JOGADOR. Deverá receber os seguintes dados no corpo da requisição:
+# REST API
 
-_Body_
+A especificação da REST API para o desafio proposto está descrita abaixo:
 
-```javascript
+## Documentação
+### Essa aplicação foi documentada utilizando o Swagger.
+
+- Para acessar a documentação, em seu navegador, digite:
+
+  - ```http://localhost:3000/api```
+
+<img src='./img/swagger.PNG'>
+
+## Criar um jogador
+
+### Request
+
+> POST ```/players/create```
+```json
 {
-	"summonerName":"OldWolfKing"
+    "summonerName": "OldWolfKing"
+}
+```
+### Curl
+```bash
+Curl -X 'POST' \
+    'http://localhost:3000/players/create' \
+    -H 'accept: application/json' \
+    -H 'Content-Type: application/json' \
+    -d '{
+    "summonerName": "summonerName"
+    }'
+```
+### Response Code
+> 201
+### Response body
+```json
+{
+    "id": "2469725b-5a47-4149-9099-706d9d417d6e",
+    "nickname": "Old Wolf King",
+    "accountId": "mf_W08JhUo10FvvJrKZaHXpILSYl1UtHFhb0z7e_7R4CUwU",
+    "summonerLevel": "235",
+    "profileIconId": 3534,
+    "summonerId": "5dKiOH-l6JPgZL04748EMj8ZaC2xRzoviOlTOjkvdcdwL3w"
 }
 ```
 
-A rota deve consumir o **SummonerName** do corpo e usá-lo para consultar no endpoint abaixo da API riotgames as informações _AccountId_, _SummonerLevel_, _ProfileIconId_ e _Id_.
+## Obter lista de jogadores cadastrados
 
-<br>
+### Request
 
-```javascript
-/lol/emmnorsu/v4/summoners/by-name/{summonerName}?api_key={token}
+`GET /players`
+
+```bash
+Curl -X 'GET' \
+    'http://localhost:3000/players' \
+    -H 'accept: application/json'
 ```
 
-### **Response**
+### Response Code
 
-<br>
+>  200
 
-> Status Code 200
-
-```javascript
-{
-    "id": "OtaV_QBRbtzt7DtXXXlXbvRjuDmDRZJ38wjbEQOqXbM",
-    "accountId": "V94KgBnbbsaR4I4MXXX4trfyvUay95h_13PCsTz6jo4ByBw",
-    "puuid": "5LwdLcx1qM2_E-1NNFTBRDgTK6oqvc3XXXmbC4gqNauImdGCIm3WM2RZLBNcIyui-sXc2Q",
-    "name": "Old Wolf King",
-    "profileIconId": 4864,
-    "revisionDate": 1613316510000,
-    "summonerLevel": 225
-}
-```
-
-E com esses dados fazer o cadastro do jogador no banco de dados.
-
-_O ID do jogador pode ser tanto UUID ou numérico incremental_
-
-<br>
-
-### **LISTAR JOGADORES**
-
-<br>
-
-Deve possuir uma rota **GET** para listar as informações da tabela **Summoner**, modelo esperado do retorno abaixo:
-
-### **Response**
-
-<br>
-
-> Status Code 200
-
-```javascript
+### Response body
+```json
 [
   {
-    id: "1",
-    nickname: "Old Wolf King",
-    accountId: "V94KgBnbbsaR4I4",
-    summonerLevel: "100",
-    profileIconId: "4864",
-    summonerId: "V94KgBnbbsaR4I4",
+    "id": "2469725b-5a47-4149-9099-706d9d417d6e",
+    "nickname": "Old Wolf King",
+    "accountId": "mf_W08JhUo10FvvJrKZaHXpILSYl1UtHFhb0z7e_7R4CUwU",
+    "summonerLevel": "235",
+    "profileIconId": 3534,
+    "summonerId": "5dKiOH-l6JPgZL04748EMj8ZaC2xRzoviOlTOjkvdcdwL3w"
   },
   {
-    id: "2",
-    nickname: "Old Wolf King",
-    accountId: "bsaR4I4V94KgBnb",
-    summonerLevel: "150",
-    profileIconId: "4684",
-    summonerId: "V94KgBnbbsaR4I4",
+    "id": "34d9802f-ea70-4d11-b909-67b39169c10b",
+    "nickname": "BiliBoss",
+    "accountId": "M47rzUIRO1IMiCTtxv5RooQFFyoa-VcOpyXJeqWXlhk",
+    "summonerLevel": "42",
+    "profileIconId": 1398,
+    "summonerId": "6TCoxna5FGbT3j-HOVOoCdGbUffpRYR9Lwp2MfJ1ECX-"
   },
-  {
-    id: "3",
-    nickname: "Old Wolf King",
-    accountId: "4I4V94KgbsaRBnb",
-    summonerLevel: "500",
-    profileIconId: "4648",
-    summonerId: "V94KgBnbbsaR4I4",
-  },
-];
+]
+
 ```
 
-### **LISTAR INFORMAÇÕES DETALHADAS DOS JOGADORES**
+## Obter lista de jogadores cadastrados com o somatório de vitórias e derrotas
 
-<br>
+### Request
 
-Deve possuir uma rota **GET** que além de trazer as informações da tabela, irá trazer as quantidades de vitórias e derrotas de cada jogador:
+> GET ```/players/details```
 
-### **Response**
+### Curl    
+```bash
+Curl -X 'GET' \
+    'http://localhost:3000/players/details' \
+    -H 'accept: application/json'
+```
 
-<br>
+### Response Code
 
-> Status Code 200
+>  200
 
-```javascript
+### Response body
+```json
 [
-  {
-    id: "1",
-    nickname: "Old Wolf King",
-    accountId: "V94KgBnbbsaR4I4",
-    summonerLevel: "100",
-    profileIconId: "4864",
-    summonerId: "V94KgBnbbsaR4I4",
-    wins: 2,
-    losses: 100,
+   {
+    "id": "2469725b-5a47-4149-9099-706d9d417d6e",
+    "nickname": "Old Wolf King",
+    "accountId": "mf_W08JhUo10FvvJrKZaHXpILSYl1UtHFhb0z7e_7R4CUwU",
+    "summonerLevel": "235",
+    "profileIconId": 3534,
+    "summonerId": "5dKiOH-l6JPgZL04748EMj8ZaC2xRzoviOlTOjkvdcdwL3w",
+    "wins": 37,
+    "losses": 27
   },
   {
-    id: "2",
-    nickname: "Old Wolf King",
-    accountId: "bsaR4I4V94KgBnb",
-    summonerLevel: "150",
-    profileIconId: "4684",
-    summonerId: "V94KgBnbbsaR4I4",
-    wins: 12,
-    losses: 3,
-  },
-  {
-    id: "3",
-    nickname: "Old Wolf King",
-    accountId: "4I4V94KgbsaRBnb",
-    summonerLevel: "500",
-    profileIconId: "4648",
-    summonerId: "V94KgBnbbsaR4I4",
-    wins: 7,
-    losses: 7,
-  },
-];
+    "id": "34d9802f-ea70-4d11-b909-67b39169c10b",
+    "nickname": "BiliBoss",
+    "accountId": "M47rzUIRO1IMiCTtxv5RooQFFyoa-VcOpyXJeqWXlhk",
+    "summonerLevel": "42",
+    "profileIconId": 1398,
+    "summonerId": "6TCoxna5FGbT3j-HOVOoCdGbUffpRYR9Lwp2MfJ1ECX-",
+    "wins": 0,
+    "losses": 0
+  }
+]
+
 ```
 
-Para trazer essas informações, consuma o endpoint da riotgames abaixo, ele retorna um array de objetos com os dados de um jogador com base no **encryptedSummonerId** enviado e cada objeto possui as propriedades _wins_ e _losses_:
-
-```javascript
-/lol/league/v4/entries/by-summoner/{encryptedSummonerId}?api_key={token}
-```
-
-_response_
-
-```javascript
-[
-  {
-    leagueId: "469c392c-063c-XXbca8-6c4c7c4d21d4",
-    queueType: "RANKED_SOLO_5x5",
-    tier: "SILVER",
-    rank: "I",
-    summonerId: "OtaV_QBRbtzt7DtpZnLXXXbvRjuDmDRZJ38wjbEQOqXbM",
-    summonerName: "Old Wolf King",
-    leaguePoints: 39,
-    wins: 12,
-    losses: 3,
-    veteran: false,
-    inactive: false,
-    freshBlood: false,
-    hotStreak: false,
-  },
-  {
-    leagueId: "0f276adb-9984-XXfdc-7d5fc5fc35d5",
-    queueType: "RANKED_FLEX_SR",
-    tier: "SILVER",
-    rank: "I",
-    summonerId: "OtaV_QBRbtzt7DtpZXXbvRjuDmDRZJ38wjbEQOqXbM",
-    summonerName: "Old Wolf King",
-    leaguePoints: 8,
-    wins: 7,
-    losses: 6,
-    veteran: false,
-    inactive: false,
-    freshBlood: false,
-    hotStreak: false,
-  },
-];
-```
-
-Deve ser feito a somatória das vitórias e derrotas de cada objeto do array, lembrando que deve ser executado para cada jogador da tabela.
-
-### **ATUALIZAR JOGADOR**
-
-<br>
-
-Deve possuir uma rota *PUT* para atualizar somente o **summonerName** e **summonerLevel** do jogador através do ID:
-
-_Body_
-
-```javascript
+## Atualizar summonerName(nickname) e summonerLevel de um jogador
+### Request
+> PUT  ```​/players​/edit​/{id}```
+```json
 {
-  "summonerName":"OldWolfKingMaster",
-  "summonerLevel": 550
+  "summonerName": "New nickname",
+  "summonerLevel": 1000
+}
+```
+### Curl
+```bash
+Curl -X 'PUT' \
+'http://localhost:3000/players/edit/2469725b-5a47-4149-9099-706d9d417d6e' \
+-H 'accept: application/json' \
+-H 'Content-Type: application/json' \
+-d '{
+"summonerName": "New nickname",
+"summonerLevel": 1000
+}'
+```
+### Response Code
+> 200
+### Response body
+```json
+{
+  "id": "2469725b-5a47-4149-9099-706d9d417d6e",
+  "nickname": "New nickname",
+  "accountId": "mf_W08JhUo10FvvJrKZaHXpILSYl1UtHFhb0z7e_7R4CUwU",
+  "summonerLevel": 1000,
+  "profileIconId": 3534,
+  "summonerId": "5dKiOH-l6JPgZL04748EMj8ZaC2xRzoviOlTOjkvdcdwL3w"
 }
 ```
 
-### **Response**
+## Remover um jogador
 
-<br>
-
-> Status Code 200
-
-```javascript
+> PUT  ```​/players​/delete/{id}```
+### Curl
+```bash
+Curl -X 'DELETE' \
+'http://localhost:3000/players/delete/2469725b-5a47-4149-9099-706d9d417d6e' \
+-H 'accept: */*'
+```
+### Response Code
+> 200
+### Response body
+```json
 {
-    "id": "OtaV_QBRbtzt7DtXXXlXbvRjuDmDRZJ38wjbEQOqXbM",
-    "accountId": "V94KgBnbbsaR4I4MXXX4trfyvUay95h_13PCsTz6jo4ByBw",
-    "puuid": "5LwdLcx1qM2_E-1NNFTBRDgTK6oqvc3XXXmbC4gqNauImdGCIm3WM2RZLBNcIyui-sXc2Q",
-    "name": "OldWolfKingMaster",
-    "profileIconId": 4864,
-    "revisionDate": 1613316510000,
-    "summonerLevel": 550
+  "message": "successfully deleted"
 }
 ```
-
-### **APAGAR JOGADOR**
-
-<br>
-
-Deve possuir uma rota *DELETE* para apagar o jogador através do ID:
-
-### **Response**
-
-<br>
-
-> Status Code 200
-
-```javascript
-{
-    "message": "successfully deleted"
-}
-```
-
-## Requisitos
-
-API deve ser desenvolvida em NodeJs.
-
-## Avaliação
-
-Você será avaliado pela usabilidade, por respeitar o design e pela arquitetura da API.
-
-* Uso do Git
-* Arquitetura da API
-* Diferencial: NestJS ou Postgres
-* A qualidade do código
-* As decisões que você fez para resolver o desafio
-* Tratamento de erros
-
-## *Como participar?*
-
-- Farça um fork deste repositório;
-- Clone seu fork na sua máquina;
-- Crie um novo branch com o seguinte padrão "challenge/seu-nome";
-- Resolva o desafio;
-- Faça uma PR para este repositório com instruções claras de como executar seu código.
-
-Sua PR será avaliada e lhe daremos um feedback o mais rápido possível.
-
-
-## FAQ
-
-> ### Posso utilizar frameworks/bibliotecas?
-> *Resposta:* Não só pode como será um diferencial
-
-> ### Quanto tempo tenho ?
-> *Resposta:* Esperamos sua resposta em até 7 dias
-
-> ### Qual banco de dados ?
-> *Resposta:* Qualquer um, sendo o Postgres ou Mongodb um diferencial
-

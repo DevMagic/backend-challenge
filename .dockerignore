@@ -1,0 +1,9 @@
+node_modules
+npm-debug.log
+.prettierrc
+.eslintrc.js
+.git
+.gitignore
+LICENSE
+README.md
+docker-compose.yml
