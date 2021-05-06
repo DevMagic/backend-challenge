@@ -56,11 +56,13 @@ $ (npm run | yarn) start:prod
 A especificação da REST API para o desafio proposto está descrita abaixo:
 
 ## Documentação
-Essa aplicação foi documentada utilizando o Swagger.
+### Essa aplicação foi documentada utilizando o Swagger.
 
-Para acessar a documentação, em seu navegador, digite:
+- Para acessar a documentação, em seu navegador, digite:
 
-```http://localhost:3000/api```
+  - ```http://localhost:3000/api```
+
+<img src='./img/swagger.PNG'>
 
 ## Criar um jogador
 
