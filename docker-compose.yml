@@ -18,7 +18,7 @@ services:
   pgsql:
     image: postgres
     container_name: 'pgsql'
-    restart: always
+    restart: unless-stopped
     volumes:
       - ./db:/docker-entrypoint-initdb.d/
     env_file: 
@@ -31,13 +31,13 @@ services:
       - TYPEORM_DATABASE=$TYPEORM_DATABASE
     ports:
       - '5432:5432'
+    networks:
+      - postgres
 
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
-      
 volumes:
   api-logs:
   db:
+
+networks:
+  postgres:
+    driver: bridge
