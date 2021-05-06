@@ -16,54 +16,54 @@ type Players = Promise<Player[]>;
 export class PlayerService {
   constructor(
     @InjectRepository(PlayerRepository)
-    private summonerRepository: PlayerRepository,
+    private playerRepository: PlayerRepository,
   ) {}
 
   /**
-   * Creates summoner service
+   * Creates player service
    * @param createPlayerDto
-   * @returns created summoner
+   * @returns created player
    */
   async create(createPlayerDto: CreatePlayerDto): Promise<Player> {
-    return this.summonerRepository.createPlayer(createPlayerDto);
+    return this.playerRepository.createPlayer(createPlayerDto);
   }
 
   /**
-   * Updates summoner service
+   * Updates player service
    * @param id
    * @param updatePlayerDto
-   * @returns updated summoner
+   * @returns updated player
    */
   async update(
     id: string,
     updatePlayerDto: UpdatePlayerDto,
   ): Promise<Player> {
-    return this.summonerRepository.updatePlayer(id, updatePlayerDto);
+    return this.playerRepository.updatePlayer(id, updatePlayerDto);
   }
 
   /**
-   * Finds summoner service
-   * @returns list of summoners
+   * Finds player service
+   * @returns list of players
    */
   async find(): Players {
-    return this.summonerRepository.findPlayers();
+    return this.playerRepository.findPlayers();
   }
 
   /**
-   * Historys summoner service
+   * Historys player service
    * @returns
    */
   async details(): Promise<any[]> {
-    return this.summonerRepository.findPlayerWithDetails();
+    return this.playerRepository.findPlayerWithDetails();
   }
   /**
-   * Deletes summoner service
+   * Deletes player service
    * @param id
    * @returns message
    */
   async delete(id: string): Promise<{ message: string }> {
     try {
-      await this.summonerRepository.delete(id);
+      await this.playerRepository.delete(id);
       return { message: 'successfully deleted' };
     } catch (error) {
       throw new NotFoundException(`Player not found. Details: ${error}`);

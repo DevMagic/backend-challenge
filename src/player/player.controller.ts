@@ -21,10 +21,10 @@ import { PlayerService } from './player.service';
 @ApiTags('Player')
 @Controller('players')
 export class PlayerController {
-  constructor(private summonerService: PlayerService) {}
+  constructor(private playerService: PlayerService) {}
 
   /**
-   * Posts summoners controller
+   * Posts players controller
    * @param createUserDto
    * @returns player
    */
@@ -35,33 +35,33 @@ export class PlayerController {
     @Body(new ValidationPipe({ transform: true }))
     createUserDto: CreatePlayerDto,
   ): Promise<Player> {
-    return await this.summonerService.create(createUserDto);
+    return await this.playerService.create(createUserDto);
   }
 
   /**
-   * Gets summoners controller
-   * @returns summoners
+   * Gets players controller
+   * @returns players
    */
   @Get('/')
   @UseInterceptors(ClassSerializerInterceptor)
   @HttpCode(200)
   async showPlayers(): Promise<any[]> {
-    return await this.summonerService.find();
+    return await this.playerService.find();
   }
 
   /**
-   * Gets summoners controller
+   * Gets players controller
    * @returns details player
    */
   @Get('/details')
   @UseInterceptors(ClassSerializerInterceptor)
   @HttpCode(200)
   async showPlayerDetails(): Promise<any[]> {
-    return await this.summonerService.details();
+    return await this.playerService.details();
   }
 
   /**
-   * Puts summoners controller
+   * Puts players controller
    * @param id
    * @param updatePlayerDto
    * @returns player
@@ -73,17 +73,17 @@ export class PlayerController {
     @Param('id') id: string,
     @Body(ValidationPipe) updatePlayerDto: UpdatePlayerDto,
   ): Promise<Player> {
-    return await this.summonerService.update(id, updatePlayerDto);
+    return await this.playerService.update(id, updatePlayerDto);
   }
 
   /**
-   * Deletes summoners controller
+   * Deletes players controller
    * @param id
    * @returns player by id
    */
   @Delete('/delete/:id')
   @HttpCode(200)
   async deletePlayer(@Param('id') id: string): Promise<{ message: string }> {
-    return await this.summonerService.delete(id);
+    return await this.playerService.delete(id);
   }
 }
