@@ -31,13 +31,7 @@ services:
       - TYPEORM_DATABASE=$TYPEORM_DATABASE
     ports:
       - '5432:5432'
-    networks:
-      - postgres
 
 volumes:
   api-logs:
   db:
-
-networks:
-  postgres:
-    driver: bridge
