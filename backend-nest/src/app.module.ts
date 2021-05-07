@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { Summoner } from './models/summoner.model';
-import { SumonnerController } from './controllers/sumonner/sumonner.controller';
+import { SummonerController } from './controllers/summoner/summoner.controller';
+import { SummonerService } from './services/summoner/summoner.service';
 
 @Module({
   imports: [
@@ -18,9 +19,10 @@ import { SumonnerController } from './controllers/sumonner/sumonner.controller';
       database: process.env.TYPEORM_DATABASE,
       entities: [Summoner]
     }),
-    TypeOrmModule.forFeature([Summoner])
+    TypeOrmModule.forFeature([Summoner]),
+    HttpModule
   ],
-  controllers: [AppController, SumonnerController],
-  providers: [AppService],
+  controllers: [AppController, SummonerController],
+  providers: [AppService, SummonerService],
 })
 export class AppModule {}

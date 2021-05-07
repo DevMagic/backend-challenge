@@ -1,6 +1,6 @@
 import {BeforeInsert, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 
-@Entity({ name: 'sumonner' })
+@Entity({ name: 'summoner' })
 export class Summoner {
     @PrimaryGeneratedColumn()
     id: number;
