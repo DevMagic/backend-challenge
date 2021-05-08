@@ -1,11 +1,8 @@
 import { BadRequestException, HttpException, HttpService, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Observable, throwError } from 'rxjs';
 import { SummonerRiotResponse, SummonerDTO, SummonerRequest } from 'src/dto/summoner/summonerDTO';
 import { Summoner } from 'src/models/summoner.model';
 import { Repository } from 'typeorm';
-import { AxiosResponse } from "axios";
-import { exception } from 'console';
 
 @Injectable()
 export class SummonerService {
@@ -21,8 +18,8 @@ export class SummonerService {
 
     async listAllWithDetails(): Promise<SummonerDTO[]> {
         const summoners: Summoner[] = await this.summonerRepository.find();
-
         const summonersDTO: SummonerDTO[] = await this.getSummonersWithDetails(summoners);
+
         return summonersDTO;
     }
 
@@ -43,7 +40,7 @@ export class SummonerService {
         return this.summonerRepository.save(summoner);
     }
 
-    async updateSumonner(id: number, summoner: SummonerRequest): Promise<SummonerDTO> {
+    async updateSummoner(id: number, summoner: SummonerRequest): Promise<SummonerDTO> {
         const summonerUpdated = await this.summonerRepository.findOneOrFail(id)
             .catch(err => { throw new NotFoundException(`Summoner with id ${id} not found`) });
 
@@ -59,7 +56,7 @@ export class SummonerService {
             .catch(err => { throw new NotFoundException(`Summoner with id ${id} not found`) });
 
         await this.summonerRepository.delete(id);
-        
+
         return {
             message: "successfully deleted"
         };

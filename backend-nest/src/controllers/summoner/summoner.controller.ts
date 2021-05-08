@@ -1,8 +1,5 @@
 import { Controller, Delete, Get, Post, Put, Body, Param} from '@nestjs/common';
 import { SummonerService } from '../../services/summoner/summoner.service'
-import { InjectRepository } from '@nestjs/typeorm';
-import { Summoner } from 'src/models/summoner.model';
-import { Repository } from 'typeorm';
 import { SummonerRequest } from 'src/dto/summoner/summonerDTO';
 
 @Controller('summoner')
@@ -27,7 +24,7 @@ export class SummonerController {
 
     @Put(":id")
     updateSummoner(@Param('id') id: number, @Body() summoner: SummonerRequest){
-        return this.summonerService.updateSumonner(id,summoner);
+        return this.summonerService.updateSummoner(id,summoner);
     }
 
     @Delete(":id")
