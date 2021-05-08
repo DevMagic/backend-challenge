@@ -43,10 +43,16 @@ export class SummonerService {
         return this.summonerRepository.save(summoner);
     }
 
-    async updateSumonner(id: number, summoner: SummonerRequest): Promise<any> {
+    async updateSumonner(id: number, summoner: SummonerRequest): Promise<SummonerDTO> {
+        const summonerUpdated = await this.summonerRepository.findOneOrFail(id)
+            .catch(err => { throw new NotFoundException(`Summoner with id ${id} not found`) });
 
-        return await this.summonerRepository.update(id,
-            { nickname: summoner.summonerName, summonerLevel: summoner.summonerLevel });
+        [summonerUpdated.nickname, summonerUpdated.summonerLevel] = 
+        [summoner.summonerName,summoner.summonerLevel];
+
+        await this.summonerRepository.update(id,summonerUpdated);
+
+        return summonerUpdated
     }
 
     async deleteSummoner(id: number): Promise<any> {
