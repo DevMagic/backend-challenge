@@ -51,12 +51,18 @@ export class SummonerService {
         [summoner.summonerName,summoner.summonerLevel];
 
         await this.summonerRepository.update(id,summonerUpdated);
-
         return summonerUpdated
     }
 
     async deleteSummoner(id: number): Promise<any> {
-       return await this.summonerRepository.delete(id);
+        await this.summonerRepository.findOneOrFail(id)
+            .catch(err => { throw new NotFoundException(`Summoner with id ${id} not found`) });
+
+        await this.summonerRepository.delete(id);
+        
+        return {
+            message: "successfully deleted"
+        };
     }
 
     async getSummoner(summonerName: string): Promise<SummonerRiotResponse>{
@@ -71,8 +77,11 @@ export class SummonerService {
     async getSummonersWithDetails(summoners: SummonerDTO[]): Promise<SummonerDTO[]> {
         summoners = await Promise.all(
             summoners.map(async summoner => await this.getDetails(summoner))
-        )
-         return summoners;
+        ).catch(err => {
+            throw new BadRequestException()
+        });
+
+        return summoners;
     }
 
     async getDetails(summoner: SummonerDTO): Promise<SummonerDTO> {
