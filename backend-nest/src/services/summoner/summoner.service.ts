@@ -1,10 +1,11 @@
-import { HttpService, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpService, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { SummonerRiotResponse, SummonerDTO, SummonerRequest } from 'src/dto/summoner/summonerDTO';
 import { Summoner } from 'src/models/summoner.model';
 import { Repository } from 'typeorm';
 import { AxiosResponse } from "axios";
+import { exception } from 'console';
 
 @Injectable()
 export class SummonerService {
@@ -14,7 +15,7 @@ export class SummonerService {
         private httpService: HttpService
     ) { }
 
-    listAll(): Promise<Summoner[]> {
+    async listAll(): Promise<Summoner[]> {
         return this.summonerRepository.find();
     }
 
@@ -28,6 +29,9 @@ export class SummonerService {
     async createSummoner(summonerName: string): Promise<SummonerDTO> {
         const player: SummonerRiotResponse = await this.getSummoner(summonerName);
         
+        if(await this.summonerRepository.findOne({summonerId:player.id}))
+            throw new BadRequestException("Summoner already registered in the system");
+
         const summoner: SummonerDTO = {
             nickname: player.name,
             accountId: player.accountId,
@@ -40,6 +44,7 @@ export class SummonerService {
     }
 
     async updateSumonner(id: number, summoner: SummonerRequest): Promise<any> {
+
         return await this.summonerRepository.update(id,
             { nickname: summoner.summonerName, summonerLevel: summoner.summonerLevel });
     }
@@ -51,20 +56,20 @@ export class SummonerService {
     async getSummoner(summonerName: string): Promise<SummonerRiotResponse>{
         const URI: string = `${process.env.RIOT_API}/lol/summoner/v4/summoners/by-name/${summonerName}?api_key=${process.env.RIOT_KEY}`;
        
-        return await this.httpService.get(URI).toPromise().then(res => res.data);
+        return await this.httpService.get(URI).toPromise().then(res => res.data)
+            .catch(err => {
+                throw new HttpException("Something went wrong",err.response.status)
+            });
     }
 
     async getSummonersWithDetails(summoners: SummonerDTO[]): Promise<SummonerDTO[]> {
-
         summoners = await Promise.all(
             summoners.map(async summoner => await this.getDetails(summoner))
         )
-        
          return summoners;
     }
 
     async getDetails(summoner: SummonerDTO): Promise<SummonerDTO> {
-
         const URI: string = `${process.env.RIOT_API}/lol/league/v4/entries/by-summoner/${summoner.summonerId}?api_key=${process.env.RIOT_KEY}`;
        
         [summoner.wins, summoner.losses] = await this.httpService.get(URI).toPromise()
@@ -78,7 +83,7 @@ export class SummonerService {
                 });
                 return [wins,losses];
             });
-
         return summoner;
     }
+
 }
