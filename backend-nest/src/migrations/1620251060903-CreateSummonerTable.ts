@@ -40,6 +40,7 @@ export class CreateSummonerTable1620251060903 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.dropTable("summoner");
     }
 
 }
