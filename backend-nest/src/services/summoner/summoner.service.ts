@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, HttpService, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpService, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SummonerRiotResponse, SummonerDTO, SummonerRequest } from 'src/dto/summoner/summonerDTO';
 import { Summoner } from 'src/models/summoner.model';
@@ -62,10 +62,10 @@ export class SummonerService {
         };
     }
 
-    async getSummoner(summonerName: string): Promise<SummonerRiotResponse>{
-        const URI: string = `${process.env.RIOT_API}/lol/summoner/v4/summoners/by-name/${summonerName}?api_key=${process.env.RIOT_KEY}`;
-       
-        return await this.httpService.get(URI).toPromise().then(res => res.data)
+    async getSummoner(summonerName: string): Promise<SummonerRiotResponse>{   
+        const [URI,config] = this.prepareURI(`/lol/summoner/v4/summoners/by-name/${summonerName}`);
+
+        return await this.httpService.get(URI,config).toPromise().then(res => res.data)
             .catch(err => {
                 throw new HttpException("Something went wrong",err.response.status)
             });
@@ -82,9 +82,9 @@ export class SummonerService {
     }
 
     async getDetails(summoner: SummonerDTO): Promise<SummonerDTO> {
-        const URI: string = `${process.env.RIOT_API}/lol/league/v4/entries/by-summoner/${summoner.summonerId}?api_key=${process.env.RIOT_KEY}`;
-       
-        [summoner.wins, summoner.losses] = await this.httpService.get(URI).toPromise()
+        const [URI,config] = this.prepareURI(`/lol/league/v4/entries/by-summoner/${summoner.summonerId}`);
+        
+        [summoner.wins, summoner.losses] = await this.httpService.get(URI,config).toPromise()
             .then(res => res.data)
             .then(sum => {
                 let wins: number = 0;
@@ -98,4 +98,14 @@ export class SummonerService {
         return summoner;
     }
 
+    prepareURI(endpoint: string): [string,object] {
+        const config = {
+            headers: {
+                "X-riot-token": process.env.RIOT_KEY
+            }
+        }
+        const URI: string = `${process.env.RIOT_API}${endpoint}`;
+
+        return [URI,config]
+    }
 }
