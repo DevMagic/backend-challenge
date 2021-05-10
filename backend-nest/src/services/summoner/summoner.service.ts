@@ -30,6 +30,7 @@ export class SummonerService {
             throw new BadRequestException("Summoner already registered in the system");
 
         const summoner: SummonerDTO = {
+            id: null,
             nickname: player.name,
             accountId: player.accountId,
             summonerLevel: player.summonerLevel,
