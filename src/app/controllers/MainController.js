@@ -57,8 +57,8 @@ class MainController{
            dados = dados.rows.map(async (dado) => {
                 const dados = await getDetalhes(dado.summonerid);
                 if(dados != 0) {
-                    const vitorias = dados[0].wins + dados[1].wins
-                    const derrotas = dados[0].losses + dados[1].losses
+                    const vitorias = dados[0].wins + dados[1].wins;
+                    const derrotas = dados[0].losses + dados[1].losses;
                     return {
                         ...dado,
                         wins: vitorias,
