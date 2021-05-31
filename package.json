@@ -1,0 +1,25 @@
+{
+  "name": "desafio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abelb96/desafio-devmagic.git"
+  },
+  "author": "Abel Pietschmann",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abelb96/desafio-devmagic/issues"
+  },
+  "homepage": "https://github.com/abelb96/desafio-devmagic#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.7",
+    "pg": "^8.6.0"
+  }
+}

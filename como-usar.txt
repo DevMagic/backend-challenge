@@ -1,0 +1,47 @@
+                                        Saudações Terráqueos...
+
+    Primeiramente eu gostaria de agradecer a oportunidade de estar participando desse desafio, segundo eu gostaria de parabenizar
+    a equipe pela ideia do desafio, jogo LOL e me senti em casa rsrs, desafio leve e interessante.
+
+    Então vamos lá...
+
+    1 - Para usar a aplicação é necessário ter o PostgreSQL em sua máquina.
+    2 - É necessário preencher o arquivo db.js que está na pasta config, com os dados do seu banco de dados PostgreSQL.
+    3 - É necessário preencher o campo API_KEY com o seu Token Riot API, que está no início arquivo MainController.js,
+     localizado na pasta controllers.
+    4 - Por ultimo como todos já sabem... é só usar o comando npm install ou yarn install, feito o download de todas as
+    dependências... é só usar o comando npm start ou yarn start.
+
+*OBS: A aplicação está configurada para usar a porta 5000, não se esqueça de deixar a mesma disponível.
+
+                                        
+                                        Como usar a API?
+    
+    1 - Rota método Post: rota apenas com '/', ou seja, domínio + /   
+    Essa rota é responsável por cadastrar o summonerName junto aos dados da API Riot em nosso banco de dados.
+
+    *Obs: Tomei a iniciativa de colocar middleware em algumas rotas, essa é uma delas, por motivos de melhor
+    funcionamento da API.
+
+    2 - Rota método Get: /semdetalhes
+    Essa rota é responsável por listar as informações de nossos jogadores do nosso banco de dados.
+
+    3 - Rota médodo Get: /comdetalhes
+    Essa rota é responsável por listar as informações de nossos jogadores junto a detalhes da API Riot.
+    Detalhes: wins e losses, o calculo feito de todas as vitorias e derrotas daquele jogador.
+
+    4 - Rota método Put: /edita/:id
+    Essa rota é responsável por editar pelo id o summonerName e summonerLevel dos jogadores do banco de dados,
+    também retornar como resposta os dados do jogador(já editados...) junto ao revisionDate com o timestamp
+    daquele exato momento.
+
+    5 - Rota método Delete: /deleta/:id
+    Essa rota é responsável por excluir o jogador de nosso banco de dados, isso feito pelo id passado no parametro,
+    tendo como resposta se der tudo certo: "message": "successfully deleted"  
+
+
+
+
+                                                FIM
+
+                                        Brasília, dia 31/05/2021 
