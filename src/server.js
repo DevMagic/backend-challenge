@@ -8,7 +8,7 @@ db.connect(erro => {
     if(erro) {
         throw new Error(erro)
     } else {
-        tabela.iniciar(db)
+        tabela.iniciar(db);
         app.use(express.json());
         app.use(rotas);                         
         app.listen(5000);

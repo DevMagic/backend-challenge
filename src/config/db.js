@@ -6,4 +6,4 @@ module.exports =  new Pool({
     host: '',
     port: '',
     database: ''
-})
+});
