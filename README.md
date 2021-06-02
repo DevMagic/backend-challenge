@@ -143,7 +143,7 @@ A rota deve consumir o **SummonerName** do corpo e usar para consultar no end po
 <br>
 
 ```javascript
-/lol/emmnorsu/v4/summoners/by-name/{summonerName}?api_key={token}
+/lol/summoner/v4/summoners/by-name/{summonerName}?api_key={token}
 ```
 
 ### **Response**
