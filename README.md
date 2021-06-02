@@ -37,6 +37,7 @@ Deve ser construido a tabela Summoner no banco de dados com essas colunas
 
 <br>
 
+_O ID do pode ser tanto UUID ou numérico incremental_
 * userId => chave estrangeira com o "id" da tabela User
 * accountId => unique
 * summonerId => unique
@@ -52,6 +53,7 @@ Deve ser construido a tabela User no banco de dados com essas colunas
 
 <br>
 
+_O ID do pode ser tanto UUID ou numérico incremental_
 * id => chave estrangeira com o "userId" da tabela Summoner
 * email => unique
 * name => obrigatorio preencher
@@ -146,11 +148,8 @@ A rota deve consumir o **SummonerName** do corpo e usar para consultar no end po
 /lol/summoner/v4/summoners/by-name/{summonerName}?api_key={token}
 ```
 
-### **Response**
+### **Response da API da RIOT**
 
-<br>
-
-> Status Code 200
 
 ```javascript
 {
@@ -165,8 +164,6 @@ A rota deve consumir o **SummonerName** do corpo e usar para consultar no end po
 ```
 
 E com esses dados fazer o cadastro do jogador no banco de dados.
-
-_O ID do jogador pode ser tanto UUID ou numérico incremental_
 
 <br>
 
