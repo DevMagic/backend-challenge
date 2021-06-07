@@ -1,0 +1,30 @@
+version: '3'
+
+
+services:
+    db:
+        image: postgres:9.6
+        ports:
+            - 5432:5432
+        volumes:
+            - ./scripts:/scripts
+            - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+        environment:
+            - POSTGRES_PASSWORD=123
+            - POSTGRES_USER=postgres
+            - POSTGRES_DB=TesteDevMagic
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
+    app:
+        image: node-back
+        build: .
+        ports:
+            - 3000:3000
+        depends_on:
+            db:
+                condition: service_healthy
+    

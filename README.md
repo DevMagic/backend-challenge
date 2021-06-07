@@ -1,306 +1,102 @@
-<img src='https://devmagic.com.br/wp-content/uploads/2020/07/logo_footer.png'>
+# Projeto League of Legends
 
-# Challenge - Developer Backend
+Gostaria de agradecer a oportunidade de participar desse desafio que particularmente adorei, tive a oportunidade de fazer um projeto robusto usando muito do que sei, espero atender as expectativas.
 
-O desafio é construir uma API Rest que seja capaz de cadastrar, buscar, atualizar e apagar os jogadores. Ela deverá ser capaz de consultar a <a href='https://developer.riotgames.com/'>Api da Riot Games</a> para trazer os dados dos jogadores que serão cadastrados em uma base de dados.
+Esse projeto tem como objetivo o desenvolvimento de um CRUD.
 
-Lista dos jogadores a serem cadastrados:
+## Arquitetura
 
-- OldWolfKing
-- Praymer
-- ThrekSor
-- AndrewDiass
-- BiliBoss
-- DartSecond
-- Devils Advocate
-- Gabrvxo
-- theKovac
-- zRabelo
+O projeto é composto por:
+- Uma aplicação back-end:
+	Pode criar summoners se o nome for encontrado na API da riot, listar todos os summoners salvos, editar, deletar e exibir informações detalhadas.
+	
+	Utiliza as tecnologias:
+	- Node Js
+	- Express
+	- Docker
+	- PostgreSQL
+	- Swagger
 
-<br>
+## Como montar o ambiente para utilização com Docker
 
-## <a href='https://developer.riotgames.com/'>API League of Legends</a>
+Para montar o projeto em sua maquina é necessário ter instalado:
 
-<br>
+- [PostgreSQL] (https://www.postgresql.org/ "postgresql")
+- [Node](https://nodejs.org/ "node")
+- [Docker](https://www.docker.com/ "docker")
 
-Para consumir a API é necessário criar uma conta na plataforma e ler a documentação. Os endpoints que serão usados nesse projeto requerem autenticação e é possivel gerar um token com tempo de expiração para poder estar consumindo esse serviço.
+Note que para utilizar a API é necessário entrar com informações do banco de dados, basta acessar o arquivo .env encontrado na raiz do projeto.
 
-## Challenge Accepted</a>
+Para a utilização do docker recomendo que o .env esteja preenchido da seguinte forma:
 
-Deve ser construída uma tabela chamada Summoner no banco de dados com essas colunas:
+DB_USER=postgres
+DB_PASSWORD=123
+DB_HOST=db
+DB_DATABASE=TesteDevMagic
 
-| Id  | Nickname      | AccountId       | SummonerLevel | ProfileIconId | SummonerId         |
-| --- | ------------- | --------------- | ------------- | ------------- | ------------------ |
-| 1   | Old Wolf King | V94KgBnbbsaR4I4 | 100           | 4864          | OtaV_QBRbtzt7DtpZn |
-| 2   | Wolf Old King | bsaR4I4V94KgBnb | 150           | 4684          | FtaZ_QBRbtzt7DtpZn |
-| 3   | King Old Wolf | 4I4V94KgbsaRBnb | 500           | 4648          | GtaT_QBRbtzt7DtpZn |
+API_KEY= "Este campo deve ser alterado de acordo com a API_KEY da riot no momento"
 
-<br>
+SLEEP_TIME=2000
 
-### **CRIAR JOGADOR**
 
-<br>
+Com tudo instalado e configurado, abra o terminal do seu sistema operacional na pasta do projeto e digite:
+```shell
+	docker build -t node-back .
 
-Deve possuir uma rota **POST** para cadastrar um JOGADOR. Deverá receber os seguintes dados no corpo da requisição:
+Esse comando cria a imagem do back-end que será utilizada pelo docker compose.
 
-_Body_
+Após isso basta digitar o seguinte comando:
+```shell
+	docker-compose up
 
-```javascript
-{
-	"summonerName":"OldWolfKing"
-}
-```
+Apartir dai tudo deve estar funcionando basta acessar a localhost:3000/doc para ter acesso ao Swagger e começar a testar.
 
-A rota deve consumir o **SummonerName** do corpo e usá-lo para consultar no endpoint abaixo da API riotgames as informações _AccountId_, _SummonerLevel_, _ProfileIconId_ e _Id_.
+PS: Sempre que alguma configuração do .env for feita é nescessário e criação de uma nova imagem para o docker, basta usar o comando:
+```shell
+	docker image rm node-back
 
-<br>
+E em seguida basta criar a nova imagem com o comando:
+```shell
+	docker build -t node-back .
 
-```javascript
-/lol/emmnorsu/v4/summoners/by-name/{summonerName}?api_key={token}
-```
 
-### **Response**
+## Como montar o ambiente para utilização sem Docker
 
-<br>
+Alternativamente o projeto também pode ser executado sem o docker:
 
-> Status Code 200
-
-```javascript
-{
-    "id": "OtaV_QBRbtzt7DtXXXlXbvRjuDmDRZJ38wjbEQOqXbM",
-    "accountId": "V94KgBnbbsaR4I4MXXX4trfyvUay95h_13PCsTz6jo4ByBw",
-    "puuid": "5LwdLcx1qM2_E-1NNFTBRDgTK6oqvc3XXXmbC4gqNauImdGCIm3WM2RZLBNcIyui-sXc2Q",
-    "name": "Old Wolf King",
-    "profileIconId": 4864,
-    "revisionDate": 1613316510000,
-    "summonerLevel": 225
-}
-```
-
-E com esses dados fazer o cadastro do jogador no banco de dados.
-
-_O ID do jogador pode ser tanto UUID ou numérico incremental_
-
-<br>
-
-### **LISTAR JOGADORES**
-
-<br>
-
-Deve possuir uma rota **GET** para listar as informações da tabela **Summoner**, modelo esperado do retorno abaixo:
-
-### **Response**
-
-<br>
-
-> Status Code 200
-
-```javascript
-[
-  {
-    id: "1",
-    nickname: "Old Wolf King",
-    accountId: "V94KgBnbbsaR4I4",
-    summonerLevel: "100",
-    profileIconId: "4864",
-    summonerId: "V94KgBnbbsaR4I4",
-  },
-  {
-    id: "2",
-    nickname: "Old Wolf King",
-    accountId: "bsaR4I4V94KgBnb",
-    summonerLevel: "150",
-    profileIconId: "4684",
-    summonerId: "V94KgBnbbsaR4I4",
-  },
-  {
-    id: "3",
-    nickname: "Old Wolf King",
-    accountId: "4I4V94KgbsaRBnb",
-    summonerLevel: "500",
-    profileIconId: "4648",
-    summonerId: "V94KgBnbbsaR4I4",
-  },
-];
-```
-
-### **LISTAR INFORMAÇÕES DETALHADAS DOS JOGADORES**
-
-<br>
-
-Deve possuir uma rota **GET** que além de trazer as informações da tabela, irá trazer as quantidades de vitórias e derrotas de cada jogador:
-
-### **Response**
-
-<br>
-
-> Status Code 200
-
-```javascript
-[
-  {
-    id: "1",
-    nickname: "Old Wolf King",
-    accountId: "V94KgBnbbsaR4I4",
-    summonerLevel: "100",
-    profileIconId: "4864",
-    summonerId: "V94KgBnbbsaR4I4",
-    wins: 2,
-    losses: 100,
-  },
-  {
-    id: "2",
-    nickname: "Old Wolf King",
-    accountId: "bsaR4I4V94KgBnb",
-    summonerLevel: "150",
-    profileIconId: "4684",
-    summonerId: "V94KgBnbbsaR4I4",
-    wins: 12,
-    losses: 3,
-  },
-  {
-    id: "3",
-    nickname: "Old Wolf King",
-    accountId: "4I4V94KgbsaRBnb",
-    summonerLevel: "500",
-    profileIconId: "4648",
-    summonerId: "V94KgBnbbsaR4I4",
-    wins: 7,
-    losses: 7,
-  },
-];
-```
-
-Para trazer essas informações, consuma o endpoint da riotgames abaixo, ele retorna um array de objetos com os dados de um jogador com base no **encryptedSummonerId** enviado e cada objeto possui as propriedades _wins_ e _losses_:
-
-```javascript
-/lol/league/v4/entries/by-summoner/{encryptedSummonerId}?api_key={token}
-```
-
-_response_
-
-```javascript
-[
-  {
-    leagueId: "469c392c-063c-XXbca8-6c4c7c4d21d4",
-    queueType: "RANKED_SOLO_5x5",
-    tier: "SILVER",
-    rank: "I",
-    summonerId: "OtaV_QBRbtzt7DtpZnLXXXbvRjuDmDRZJ38wjbEQOqXbM",
-    summonerName: "Old Wolf King",
-    leaguePoints: 39,
-    wins: 12,
-    losses: 3,
-    veteran: false,
-    inactive: false,
-    freshBlood: false,
-    hotStreak: false,
-  },
-  {
-    leagueId: "0f276adb-9984-XXfdc-7d5fc5fc35d5",
-    queueType: "RANKED_FLEX_SR",
-    tier: "SILVER",
-    rank: "I",
-    summonerId: "OtaV_QBRbtzt7DtpZXXbvRjuDmDRZJ38wjbEQOqXbM",
-    summonerName: "Old Wolf King",
-    leaguePoints: 8,
-    wins: 7,
-    losses: 6,
-    veteran: false,
-    inactive: false,
-    freshBlood: false,
-    hotStreak: false,
-  },
-];
-```
-
-Deve ser feito a somatória das vitórias e derrotas de cada objeto do array, lembrando que deve ser executado para cada jogador da tabela.
-
-### **ATUALIZAR JOGADOR**
-
-<br>
-
-Deve possuir uma rota *PUT* para atualizar somente o **summonerName** e **summonerLevel** do jogador através do ID:
-
-_Body_
-
-```javascript
-{
-  "summonerName":"OldWolfKingMaster",
-  "summonerLevel": 550
-}
-```
-
-### **Response**
-
-<br>
-
-> Status Code 200
-
-```javascript
-{
-    "id": "OtaV_QBRbtzt7DtXXXlXbvRjuDmDRZJ38wjbEQOqXbM",
-    "accountId": "V94KgBnbbsaR4I4MXXX4trfyvUay95h_13PCsTz6jo4ByBw",
-    "puuid": "5LwdLcx1qM2_E-1NNFTBRDgTK6oqvc3XXXmbC4gqNauImdGCIm3WM2RZLBNcIyui-sXc2Q",
-    "name": "OldWolfKingMaster",
-    "profileIconId": 4864,
-    "revisionDate": 1613316510000,
-    "summonerLevel": 550
-}
-```
-
-### **APAGAR JOGADOR**
-
-<br>
-
-Deve possuir uma rota *DELETE* para apagar o jogador através do ID:
-
-### **Response**
-
-<br>
-
-> Status Code 200
-
-```javascript
-{
-    "message": "successfully deleted"
-}
-```
-
-## Requisitos
-
-API deve ser desenvolvida em NodeJs.
-
-## Avaliação
-
-Você será avaliado pela usabilidade, por respeitar o design e pela arquitetura da API.
-
-* Uso do Git
-* Arquitetura da API
-* Diferencial: NestJS ou Postgres
-* A qualidade do código
-* As decisões que você fez para resolver o desafio
-* Tratamento de erros
-
-## *Como participar?*
-
-- Farça um fork deste repositório;
-- Clone seu fork na sua máquina;
-- Crie um novo branch com o seguinte padrão "challenge/seu-nome";
-- Resolva o desafio;
-- Faça uma PR para este repositório com instruções claras de como executar seu código.
-
-Sua PR será avaliada e lhe daremos um feedback o mais rápido possível.
-
-
-## FAQ
-
-> ### Posso utilizar frameworks/bibliotecas?
-> *Resposta:* Não só pode como será um diferencial
-
-> ### Quanto tempo tenho ?
-> *Resposta:* Esperamos sua resposta em até 7 dias
-
-> ### Qual banco de dados ?
-> *Resposta:* Qualquer um, sendo o Postgres ou Mongodb um diferencial
+Basta configurar o arquivo .env com as informações do seu banco de dados, não esquecendo de checar se a API_KEY esta valida.
 
+Em seguida abra o terminal do seu sistema operacional na pasta do projeto e digite:
+```shell
+	npm install
+
+Após o node modules terminar sua instalação simplesmente digite:
+```shell
+	npm start
+
+A rota localhost:3000/doc esta disponível para o uso com o Swagger.
+
+
+## Rotas
+
+/criar : Recebe um json no padrão:
+
+		{
+			"summonerName":"NickDoSummoner"
+		}
+
+Procura o nick na api da Riot e retorn um json com as informações obtidas.
+
+
+/listarSummoners : Retorna todos os Summoners cadastrados na base de dados.
+
+/infoSummoners : Usa o summonerId para trazer mais informações da api da riot como numero de vitórias e derrotas. Essa rota pode apresentar lentidões devido ao numero limitado de request que podem ser feitas para a API da riot.
+
+/atualizarSummoner/:id : Atualiza o summonerName e o lvl, recebe o id do summoner por url e do body um padrão:
+		
+				{
+  					"summonerName":"NovoNick",
+  					"summonerLevel": 100
+				}
+
+/deletarSummoner/:id : Deleta um summoner através do id passado por url
