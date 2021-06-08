@@ -1,3 +1,3 @@
 \l
-\c minhasfinancas
-\d financeiro.usuario
+\c TesteDevMagic
+\d summoner
