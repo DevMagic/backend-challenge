@@ -27,21 +27,110 @@ Para consumir a API é necessário criar uma conta na plataforma e ler a documen
 
 ## Challenge Accepted</a>
 
-Deve ser construída uma tabela chamada Summoner no banco de dados com essas colunas:
+Deve ser construido a tabela Summoner no banco de dados com essas colunas
 
-| Id  | Nickname      | AccountId       | SummonerLevel | ProfileIconId | SummonerId         |
-| --- | ------------- | --------------- | ------------- | ------------- | ------------------ |
-| 1   | Old Wolf King | V94KgBnbbsaR4I4 | 100           | 4864          | OtaV_QBRbtzt7DtpZn |
-| 2   | Wolf Old King | bsaR4I4V94KgBnb | 150           | 4684          | FtaZ_QBRbtzt7DtpZn |
-| 3   | King Old Wolf | 4I4V94KgbsaRBnb | 500           | 4648          | GtaT_QBRbtzt7DtpZn |
-
-<br>
-
-### **CRIAR JOGADOR**
+| Id  | Nickname      | AccountId       | SummonerLevel | ProfileIconId | SummonerId         | userId             |
+| --- | ------------- | --------------- | ------------- | ------------- | ------------------ | ------------------ |
+| 1   | Old Wolf King | V94KgBnbbsaR4I4 | 100           | 4864          | OtaV_QBRbtzt7DtpZn | 1                  |
+| 2   | Wolf Old King | bsaR4I4V94KgBnb | 150           | 4684          | FtaZ_QBRbtzt7DtpZn | 2                  |
+| 3   | King Old Wolf | 4I4V94KgbsaRBnb | 500           | 4648          | GtaT_QBRbtzt7DtpZn | 3                  |
 
 <br>
 
-Deve possuir uma rota **POST** para cadastrar um JOGADOR. Deverá receber os seguintes dados no corpo da requisição:
+_O ID do pode ser tanto UUID ou numérico incremental_
+* userId => chave estrangeira com o "id" da tabela User
+* accountId => unique
+* summonerId => unique
+* nickname => obrigatorio preencher
+
+<br>
+
+Deve ser construido a tabela User no banco de dados com essas colunas
+
+| Id  | Name          | Email                        | Password                                     | 
+| --- | ------------- | ---------------------------- | -------------------------------------------- |
+| 1   | Gabriel       | laurencioX.arkauss@gmail.com | 6RdShg1qV2ZAp9LJJKeIcCDhatpEXiBdKCnK41AX7ws= |
+
+<br>
+
+_O ID do pode ser tanto UUID ou numérico incremental_
+* id => chave estrangeira com o "userId" da tabela Summoner
+* email => unique
+* name => obrigatorio preencher
+* password => obrigatorio preencher
+
+<br>
+
+### **CRIAR USUÁRIO**
+
+<br>
+
+Deve possuir uma rota **POST** para cadastrar um USUÁRIO, deverá receber os seguintes dados no corpo da requisição:
+
+_Body_
+
+```javascript
+{
+  "name": "gabriel",
+  "email": "gabriel@gabriel.com",
+  "password": "1213141516",
+}
+```
+
+<br>
+
+### **Response**
+
+<br>
+
+> Status Code 201
+
+```javascript
+{
+    "id": "OtaV_QBRbtzt7DtXXXlXbvRjuDmDRZJ38wjbEQOqXbM",
+    "name":"gabriel",
+    "email":"gabriel@gabriel.com",
+    "password":"6RdShg1qV2ZAp9LJJKeIcCDhatpEXiBdKCnK41AX7ws=",
+}
+```
+
+### **LOGIN**
+
+<br>
+
+Deve possuir uma rota **POST** para retorna um token de acesso que expira em 24h, com esse token deve ser possivel acessar os endpoints a seguir:
+
+_Body_
+
+```javascript
+{
+  "name": "gabriel",
+  "email": "gabriel@gabriel.com",
+  "password": "1213141516",
+}
+```
+
+<br>
+
+### **Response**
+
+<br>
+
+> Status Code 200
+
+```javascript
+{    
+    "token":"6RdShg1qV2ZApeIcCDhatpEXiBdKCnK41AX79LJJKeIcCDhatpEXiBdKCnK41AX7ws="
+}
+```
+
+### **CRIAR SUMMONER**
+
+<br>
+
+*Para consumir essa rota é necessario enviar um bearer token valido, e o userId vai ser consumido do token.*
+
+Deve possuir uma rota **POST** para cadastrar um SUMMONER, deverá receber os seguintes dados no corpo da requisição:
 
 _Body_
 
@@ -51,19 +140,16 @@ _Body_
 }
 ```
 
-A rota deve consumir o **SummonerName** do corpo e usá-lo para consultar no endpoint abaixo da API riotgames as informações _AccountId_, _SummonerLevel_, _ProfileIconId_ e _Id_.
+A rota deve consumir o **SummonerName** do corpo e usar para consultar no end point abaixo da API riotgames as informações _AccountId_, _SummonerLevel_, _ProfileIconId_ e _Id_.
 
 <br>
 
 ```javascript
-/lol/emmnorsu/v4/summoners/by-name/{summonerName}?api_key={token}
+/lol/summoner/v4/summoners/by-name/{summonerName}?api_key={token}
 ```
 
-### **Response**
+### **Response da API da RIOT**
 
-<br>
-
-> Status Code 200
 
 ```javascript
 {
@@ -79,11 +165,11 @@ A rota deve consumir o **SummonerName** do corpo e usá-lo para consultar no end
 
 E com esses dados fazer o cadastro do jogador no banco de dados.
 
-_O ID do jogador pode ser tanto UUID ou numérico incremental_
-
 <br>
 
 ### **LISTAR JOGADORES**
+
+*Para consumir essa rota é necessario enviar um bearer token valido.*
 
 <br>
 
@@ -126,9 +212,18 @@ Deve possuir uma rota **GET** para listar as informações da tabela **Summoner*
 
 ### **LISTAR INFORMAÇÕES DETALHADAS DOS JOGADORES**
 
+*Para consumir essa rota é necessario enviar um bearer token valido.*
+
 <br>
 
-Deve possuir uma rota **GET** que além de trazer as informações da tabela, irá trazer as quantidades de vitórias e derrotas de cada jogador:
+Deve possuir uma rota **GET** que ira além de trazer as informações da tabela ira trazer as quantidades de vitorias e derrotas de cada jogador, e deve ser possivel passar alguns campos para filtrar o resultado retornado:
+
+### **Query**
+<br>
+* Nickname	
+* SummonerLevel
+* Vitorias
+* Derrotas
 
 ### **Response**
 
@@ -218,6 +313,8 @@ Deve ser feito a somatória das vitórias e derrotas de cada objeto do array, le
 
 ### **ATUALIZAR JOGADOR**
 
+*Para consumir essa rota é necessario enviar um bearer token valido.*
+
 <br>
 
 Deve possuir uma rota *PUT* para atualizar somente o **summonerName** e **summonerLevel** do jogador através do ID:
@@ -251,6 +348,8 @@ _Body_
 
 ### **APAGAR JOGADOR**
 
+*Para consumir essa rota é necessario enviar um bearer token valido.*
+
 <br>
 
 Deve possuir uma rota *DELETE* para apagar o jogador através do ID:
@@ -267,9 +366,21 @@ Deve possuir uma rota *DELETE* para apagar o jogador através do ID:
 }
 ```
 
+### **EXPORTAR JOGADORES**
+
+*Para consumir essa rota é necessario enviar um bearer token valido.*
+
+<br>
+
+Deve possuir uma rota _POST_ que gera uma XLSX com todos os summoners cadastrados no banco de dados, com as quantidades de vitorias e derrotas.
+
+
 ## Requisitos
 
-API deve ser desenvolvida em NodeJs.
+* API deve ser desenvolvida em NodeJs;
+* Deve ser implementado testes que garantam que todas as rotas da API estejam funcionando
+* As rotas que manipulam a tabela Summoner deve ser necessario passar um token de autenticação
+
 
 ## Avaliação
 
