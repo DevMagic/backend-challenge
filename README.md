@@ -83,7 +83,7 @@ _Body_
 
 <br>
 
-> Status Code 200
+> Status Code 201
 
 ```javascript
 {
