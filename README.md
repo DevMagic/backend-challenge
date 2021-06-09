@@ -2,7 +2,7 @@
 
 # Challenge - Developer Backend
 
-O desafio é construir uma API Rest que seja capaz de cadastrar, buscar, atualizar e apagar os jogadores, ela deverá ser capaz de consultar a <a href='https://developer.riotgames.com/'>Api da Riot Games</a> para trazer informações sobre os jogadores que serão cadastrados e os dados armazenados num banco de dados PostgreSQL.
+O desafio é construir uma API Rest que seja capaz de cadastrar, buscar, atualizar e apagar os jogadores. Ela deverá ser capaz de consultar a <a href='https://developer.riotgames.com/'>Api da Riot Games</a> para trazer os dados dos jogadores que serão cadastrados em uma base de dados.
 
 Lista dos jogadores a serem cadastrados:
 
@@ -23,7 +23,7 @@ Lista dos jogadores a serem cadastrados:
 
 <br>
 
-Para consumir a api é necessario criar uma conta na plataforma e ler a documentação, os endpoints que serão usados nesse projeto requerem autenticação e é possivel gerar um token com tempo de expiração para poder estar consumindo esse serviço.
+Para consumir a API é necessário criar uma conta na plataforma e ler a documentação. Os endpoints que serão usados nesse projeto requerem autenticação e é possivel gerar um token com tempo de expiração para poder estar consumindo esse serviço.
 
 ## Challenge Accepted</a>
 
@@ -173,7 +173,7 @@ E com esses dados fazer o cadastro do jogador no banco de dados.
 
 <br>
 
-Deve possuir uma rota **GET** para listar as informações da tabela Summoner, modelo esperado do retorno abaixo:
+Deve possuir uma rota **GET** para listar as informações da tabela **Summoner**, modelo esperado do retorno abaixo:
 
 ### **Response**
 
@@ -266,7 +266,7 @@ Deve possuir uma rota **GET** que ira além de trazer as informações da tabela
 ];
 ```
 
-Para trazer essas informações deve consumir o endpoint da riotgames abaixo, ele retorna um array de objetos com informações de um Jogador com base no **encryptedSummonerId** enviado e cada objeto possui ás propriedades _wins_ e _losses_:
+Para trazer essas informações, consuma o endpoint da riotgames abaixo, ele retorna um array de objetos com os dados de um jogador com base no **encryptedSummonerId** enviado e cada objeto possui as propriedades _wins_ e _losses_:
 
 ```javascript
 /lol/league/v4/entries/by-summoner/{encryptedSummonerId}?api_key={token}
@@ -309,7 +309,7 @@ _response_
 ];
 ```
 
-Deve ser feito a soma das vitorias e derrotas de cada objeto do array, lembrando que deve ser executado para cada jogador da tabela.
+Deve ser feito a somatória das vitórias e derrotas de cada objeto do array, lembrando que deve ser executado para cada jogador da tabela.
 
 ### **ATUALIZAR JOGADOR**
 
@@ -317,7 +317,7 @@ Deve ser feito a soma das vitorias e derrotas de cada objeto do array, lembrando
 
 <br>
 
-Deve possuir uma rota _PUT_ para atualizar somente o **summonerName** e **summonerLevel** do jogador através do ID:
+Deve possuir uma rota *PUT* para atualizar somente o **summonerName** e **summonerLevel** do jogador através do ID:
 
 _Body_
 
@@ -352,7 +352,7 @@ _Body_
 
 <br>
 
-Deve possuir uma rota _DELETE_ para apagar o jogador através do ID:
+Deve possuir uma rota *DELETE* para apagar o jogador através do ID:
 
 ### **Response**
 
@@ -399,18 +399,18 @@ Você será avaliado pela usabilidade, por respeitar o design e pela arquitetura
 - Clone seu fork na sua máquina;
 - Crie um novo branch com o seguinte padrão "challenge/seu-nome";
 - Resolva o desafio;
-- Faça uma PR para este repositório com instruções claras de como executar seu código
+- Faça uma PR para este repositório com instruções claras de como executar seu código.
 
 Sua PR será avaliada e lhe daremos um feedback o mais rápido possível.
 
 
 ## FAQ
 
-> ### Posso utilizar frameworks/bibliotecas ?
-> *Resposta:* Não so deve como é um diferencial
+> ### Posso utilizar frameworks/bibliotecas?
+> *Resposta:* Não só pode como será um diferencial
 
 > ### Quanto tempo tenho ?
-> *Resposta:* X
+> *Resposta:* Esperamos sua resposta em até 7 dias
 
 > ### Qual banco de dados ?
 > *Resposta:* Qualquer um, sendo o Postgres ou Mongodb um diferencial
