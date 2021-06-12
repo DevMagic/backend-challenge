@@ -1,73 +1,222 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+<img src='https://devmagic.com.br/wp-content/uploads/2020/07/logo_footer.png'>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# Challenge - Developer Backend | Pedro Soares
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Technologies Stack
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+`NestJS` `MongoDB` `Axios` 
 
 ## Installation
 
 ```bash
-$ npm install
+$ yarn | npm install
 ```
 
-## Running the app
+To have the access keys, copy the file `.env.example` for the `.env`.
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+$ cp .env.example .env
 ```
 
-## Test
+Set your token from the <a href='https://developer.riotgames.com/'>API League of Legends</a> on the `RIOT_API_TOKEN`.
+
+And set `DB` variables (`DB_USER`, `DB_PASSWORD`, `DB_HOST`,`DB_NAME`)
+
+## Running
 
 ```bash
-# unit tests
-$ npm run test
+# Run the application in development mode
+$ (npm run | yarn) start
 
-# e2e tests
-$ npm run test:e2e
+# Run the application in development mode with file modification monitoring
+$ (npm run | yarn) start:dev
 
-# test coverage
-$ npm run test:cov
+# Run the application in production mode
+$ (npm run | yarn) start:prod
 ```
 
-## Support
+## Documentation
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Swagger IO
 
-## Stay in touch
+- To access the documentation, in your browser, go to: http://localhost:3000/swagger
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# API
 
-## License
+## Register Summoner
 
-Nest is [MIT licensed](LICENSE).
+> POST `/summoners`
+
+
+### Request Body
+```json
+{
+  "summonerName": "OldWolfKing"
+}
+```
+
+### Curl
+
+```bash
+curl --request POST \
+     --url http://localhost:3000/summoners \
+     --header 'Content-Type: application/json' \
+     --data '{ "summonerName": "OldWolfKing" }'
+```
+
+### Response Status Code
+
+> 201 Created
+
+### Response Body
+
+```json
+{
+  "id": "e2628230-caff-11eb-9b56-81fab2db61e1",
+  "nickname": "Old Wolf King",
+  "accountId": "tJBkm5MT-UmDBIzy8egfzQLwSl7dNrZeI__VrB0348YP5Fg",
+  "summonerLevel": 237,
+  "profileIconId": 4903,
+  "summonerId": "IPmOC4F1HUAz052mk2c7xU-uJpv0HkeDBwgD4vgwfOp-RCs"
+}
+```
+
+## List Summoners
+
+> GET `/summoners`
+
+```bash
+curl --request GET \
+     --url http://localhost:3000/summoners
+```
+
+### Response Status Code
+
+> 200 OK
+
+### Response Body
+
+```json
+[
+  {
+    "id": "e2628230-caff-11eb-9b56-81fab2db61e1",
+    "nickname": "Old Wolf King",
+    "accountId": "tJBkm5MT-UmDBIzy8egfzQLwSl7dNrZeI__VrB0348YP5Fg",
+    "summonerLevel": 237,
+    "profileIconId": 4903,
+    "summonerId": "IPmOC4F1HUAz052mk2c7xU-uJpv0HkeDBwgD4vgwfOp-RCs"
+  },
+  {
+    "id": "73a3aeb0-caf4-11eb-b090-35d257b933db",
+    "nickname": "ThrekSor",
+    "accountId": "1EHFoad6miZWfcQHdBU8Bx8PE_cylvoC4finxxJKTYz92eI",
+    "summonerLevel": 307,
+    "profileIconId": 777,
+    "summonerId": "aJW1twscXebozIo9P4hl-LUAxjz6AlO0NLt_7h4c8Kd4CQ"
+  }
+]
+```
+
+## List Summoners with detailed information
+
+> GET `/summoners?detailedInfo=true`
+
+### Curl
+
+```bash
+curl --request GET \
+     --url 'http://localhost:3000/summoners?detailedInfo=true'
+```
+
+### Response Status Code
+
+> 200 OK
+
+### Response Body
+
+```json
+[
+  {
+    "id": "e2628230-caff-11eb-9b56-81fab2db61e1",
+    "nickname": "Old Wolf King",
+    "accountId": "tJBkm5MT-UmDBIzy8egfzQLwSl7dNrZeI__VrB0348YP5Fg",
+    "summonerLevel": 237,
+    "profileIconId": 4903,
+    "summonerId": "IPmOC4F1HUAz052mk2c7xU-uJpv0HkeDBwgD4vgwfOp-RCs",
+    "wins": 38,
+    "losses": 35
+  },
+  {
+    "id": "73a3aeb0-caf4-11eb-b090-35d257b933db",
+    "nickname": "ThrekSor",
+    "accountId": "1EHFoad6miZWfcQHdBU8Bx8PE_cylvoC4finxxJKTYz92eI",
+    "summonerLevel": 307,
+    "profileIconId": 777,
+    "summonerId": "aJW1twscXebozIo9P4hl-LUAxjz6AlO0NLt_7h4c8Kd4CQ",
+    "wins": 223,
+    "losses": 205
+  }
+]
+```
+
+## Update Summoner
+
+> PUT `​/summoners/:id`
+
+### Request Body
+
+```json
+{
+  "summonerName": "OldWolfKingMaster",
+  "summonerLevel": 550
+}
+```
+
+### Curl
+
+```bash
+curl --request PUT \
+     --url http://localhost:3000/summoners/1dbf0ee0-caf9-11eb-928f-73d7f687b8ed \
+     --header 'Content-Type: application/json' \
+     --data '{ "summonerName":"OldWolfKingMaster", "summonerLevel": 550 }'
+```
+
+### Response Status Code
+
+> 200 OK
+
+### Response Body
+
+```json
+{
+  "id": "d5105ef0-caea-11eb-bbe7-cb19545b6443",
+  "nickname": "OldWolfKingMaster",
+  "accountId": "mf_W08JhUo10FvvJrKZaHXpILSYl1UtHFhb0z7e_7R4CUwU",
+  "summonerLevel": 550,
+  "profileIconId": 3534,
+  "summonerId": "5dKiOH-l6JPgZL04748EMj8ZaC2xRzoviOlTOjkvdcdwL3w"
+}
+```
+
+## Delete Summoner
+
+> DELETE `​/summoners/:id`
+
+### Curl
+
+```bash
+curl --request DELETE \
+     --url http://localhost:3000/summoners/1dbf0ee0-caf9-11eb-928f-73d7f687b8ed
+```
+
+### Response Status Code
+
+> 200 OK
+
+### Response Body
+
+```json
+{
+  "message": "successfully deleted"
+}
+```
