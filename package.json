@@ -27,6 +27,8 @@
     "@nestjs/mongoose": "^7.2.4",
     "@nestjs/platform-express": "^7.6.15",
     "axios": "^0.21.1",
+    "class-transformer": "^0.4.0",
+    "class-validator": "^0.13.1",
     "mongoose": "^5.12.13",
     "node-uuid": "^1.4.8",
     "reflect-metadata": "^0.1.13",
