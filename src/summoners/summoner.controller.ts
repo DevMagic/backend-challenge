@@ -1,3 +1,4 @@
+import { ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Document } from "mongoose";
 import {
   Body,
@@ -18,11 +19,18 @@ import { CreateSummonerDto } from "./dto/createSummoner.dto";
 import { Summoner } from "./interfaces/summoner.interface";
 import { SummonerService } from "./summoner.service";
 
+@ApiTags("summoners")
 @Controller("summoners")
+@ApiResponse({
+  status: HttpStatus.INTERNAL_SERVER_ERROR,
+  description: "Internal Server Error",
+})
 export class SummonerController {
-  constructor(private summonerService: SummonerService) { }
+  constructor(private summonerService: SummonerService) {}
 
   @Get()
+  @ApiQuery({ name: "detailedInfo", type: "boolean", required: false })
+  @ApiResponse({ status: HttpStatus.OK, description: "OK" })
   @HttpCode(HttpStatus.OK)
   async getAll(
     @Query("detailedInfo") detailedInfo: boolean,
@@ -32,6 +40,14 @@ export class SummonerController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: "The summoner has been successfully created.",
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: "The Record not found or non existent",
+  })
   public async create(
     @Body() createSummonerDto: CreateSummonerDto,
   ): Promise<Summoner> {
@@ -40,6 +56,14 @@ export class SummonerController {
 
   @Put(":id")
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Summoner has been successfully updated.",
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: "The Record not found or non existent",
+  })
   async update(
     @Param("id") id: string,
     @Body() updateSummonerDto: UpdateSummonerDto,
@@ -49,6 +73,14 @@ export class SummonerController {
 
   @Delete(":id")
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "The summoner was successfully deleted.",
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: "The Record not found or non existent",
+  })
   async delete(@Param("id") id: string): Promise<{ message: string }> {
     await this.summonerService.delete(id);
 

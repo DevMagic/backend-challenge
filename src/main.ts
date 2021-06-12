@@ -1,3 +1,4 @@
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { UnprocessableEntityException, ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
@@ -19,6 +20,13 @@ async function bootstrap() {
       },
     }),
   );
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle("Backend Challenge API")
+    .setVersion("1.0")
+    .build();
+  const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup("swagger", app, swaggerDocument);
 
   await app.listen(3000);
 }
