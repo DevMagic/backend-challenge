@@ -7,12 +7,20 @@ export default {
 
     let user = await User.findOne({ email });
 
+    const salt = crypto.randomBytes(16).toString('hex');
+
+    const hash = crypto
+      .pbkdf2Sync(password, salt, 128, 16, `sha512`)
+      .toString(`hex`);
+
+    const _id = crypto.randomUUID();
+
     if (!user && name.length > 0 && password.length > 8) {
       user = await User.create({
-        id: crypto.randomBytes(16).toString('hex'),
-        email,
+        _id,
         name,
-        password,
+        email,
+        password: hash,
       });
     }
 
