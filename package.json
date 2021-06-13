@@ -1,6 +1,7 @@
 {
   "name": "backend-challenge",
   "version": "0.0.1",
+  "type": "module",
   "main": "./src/server.js",
   "repository": "git@github.com:leandrolid/backend-challenge.git",
   "author": "Leandro Liduvino <leandro.augusto460@gmail.com>",
