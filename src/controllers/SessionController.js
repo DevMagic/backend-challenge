@@ -1,13 +1,13 @@
 import User from '../models/User.js';
 import crypto from 'crypto';
+import 'dotenv/config';
 
 export default {
   async create(request, response) {
     const { name, email, password } = request.body;
+    const salt = process.env.SALT;
 
     let user = await User.findOne({ email });
-
-    const salt = crypto.randomBytes(16).toString('hex');
 
     const hash = crypto
       .pbkdf2Sync(password, salt, 128, 16, `sha512`)
@@ -22,8 +22,13 @@ export default {
         email,
         password: hash,
       });
+    } else if (user) {
+      return response.status(200).json(user);
+    } else {
+      const error = 'Verify your data';
+      return response.status(400).json({ error });
     }
 
-    return response.json(user);
+    return response.status(201).json(user);
   },
 };
