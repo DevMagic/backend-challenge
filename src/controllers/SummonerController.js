@@ -8,8 +8,6 @@ export default {
     const { summonerName } = request.body;
     const { token, user_id } = request.headers;
 
-    const _id = crypto.randomUUID();
-
     try {
       const user = await User.findOne({ _id: user_id });
 
@@ -23,7 +21,7 @@ export default {
 
       if (!summoner) {
         summoner = await Summoner.create({
-          _id,
+          _id: crypto.randomUUID(),
           nickname: data.name,
           accountId: data.accountId,
           summonerLevel: data.summonerLevel,
@@ -33,10 +31,16 @@ export default {
         });
       }
 
-      return response.json(data);
+      return response.status(201).json(data);
     } catch (error) {
-      return response.json({ error });
+      return response.status(400).json({ error });
     }
   },
-  async store(request, response) {},
+
+  async index(request, response) {
+    const { user_id } = request.headers;
+    const summoners = await Summoner.findOne({ userId: user_id });
+
+    return response.status(200).json(summoners);
+  },
 };

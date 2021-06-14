@@ -1,12 +1,13 @@
 import User from '../models/User.js';
 import 'dotenv/config';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 
-function verifyPassword(password, userSalt) {
-  const salt = userSalt;
+function verifyPassword(itemToHash, secretKey) {
+  const secret = secretKey;
 
   const hash = crypto
-    .pbkdf2Sync(password, salt, 128, 16, `sha512`)
+    .pbkdf2Sync(itemToHash, secret, 128, 16, `sha512`)
     .toString(`hex`);
   return hash;
 }
@@ -15,21 +16,22 @@ export default {
   async create(request, response) {
     const { name, email, password } = request.body;
 
+    const secret = process.env.SECRET_KEY;
+    const hash = verifyPassword(password, secret);
+
     const {
       name: DB_NAME,
       email: DB_EMAIL,
       password: DB_PASSWORD,
-    } = await User.findOne({ name, email });
-
-    const salt = process.env.SALT;
-
-    const hash = verifyPassword(password, salt);
-
-    // const token = request.headers['x-riot-token'];
+      _id,
+    } = await User.findOne({ name, email, password: hash });
 
     if (name === DB_NAME && email === DB_EMAIL && hash === DB_PASSWORD) {
-      const token = process.env.API_TOKEN;
-      return response.json({ token });
+      const token = jwt.sign({ _id }, process.env.SECRET_KEY, {
+        expiresIn: 60 * 60 * 24, // expires in 24h
+      });
+
+      return response.json({ _id, token });
     }
 
     // const { data } = await api.get(

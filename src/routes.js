@@ -10,5 +10,6 @@ routes.post('/sessions', SessionController.create);
 routes.post('/authentications', AuthenticationController.create);
 
 routes.post('/summoners', SummonerController.create);
+routes.get('/summoners', SummonerController.index);
 
 export { routes };
