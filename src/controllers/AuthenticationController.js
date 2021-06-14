@@ -16,28 +16,27 @@ export default {
   async create(request, response) {
     const { name, email, password } = request.body;
 
-    const secret = process.env.SECRET_KEY;
-    const hash = verifyPassword(password, secret);
+    try {
+      const secret = process.env.SECRET_KEY;
+      const hash = verifyPassword(password, secret);
+      const user = await User.findOne({ name, email, password: hash });
 
-    const {
-      name: DB_NAME,
-      email: DB_EMAIL,
-      password: DB_PASSWORD,
-      _id,
-    } = await User.findOne({ name, email, password: hash });
+      if (
+        name === user.name &&
+        email === user.email &&
+        hash === user.password
+      ) {
+        const { _id } = user;
+        const token = jwt.sign({ _id }, process.env.SECRET_KEY, {
+          expiresIn: 60 * 60 * 24, // expires in 24h
+        });
 
-    if (name === DB_NAME && email === DB_EMAIL && hash === DB_PASSWORD) {
-      const token = jwt.sign({ _id }, process.env.SECRET_KEY, {
-        expiresIn: 60 * 60 * 24, // expires in 24h
-      });
-
-      return response.json({ _id, token });
+        return response.status(200).json({ token });
+      } else if (!user) {
+        return response.status(404).json({ message: 'User not found' });
+      }
+    } catch (error) {
+      return response.status(400).json({ error });
     }
-
-    // const { data } = await api.get(
-    //   `/lol/summoner/v4/summoners/by-name/OldWolfKing?api_key=${token}`,
-    // );
-
-    return response.json({ message: 'User not found' });
   },
 };

@@ -5,9 +5,12 @@ import SummonerController from './controllers/SummonerController.js';
 
 const routes = Router();
 
-routes.post('/sessions', SessionController.create);
+routes.get('/', (request, response) => {
+  return response.json({ message: 'server online' });
+});
 
-routes.post('/authentications', AuthenticationController.create);
+routes.post('/signup', SessionController.create);
+routes.post('/login', AuthenticationController.create);
 
 routes.post('/summoners', SummonerController.create);
 routes.get('/summoners', SummonerController.index);

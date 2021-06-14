@@ -1,46 +1,84 @@
 import Summoner from '../models/Summoner.js';
-import User from '../models/User.js';
 import api from '../services/api.js';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
+
+function verifyToken(challenge_token) {
+  if (!challenge_token)
+    return response
+      .status(401)
+      .json({ auth: false, message: 'No token provided.' });
+
+  jwt.verify(challenge_token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err)
+      return response
+        .status(500)
+        .json({ auth: false, message: 'Failed to authenticate token.' });
+
+    const { _id } = decoded;
+    return _id;
+  });
+}
+
+async function getAPIData(summonerName) {
+  const apiToken = process.env.API_TOKEN;
+
+  const { data } = await api.get(
+    `/lol/summoner/v4/summoners/by-name/${summonerName}`,
+    { headers: { 'X-Riot-Token': apiToken } },
+  );
+
+  return data;
+}
 
 export default {
   async create(request, response) {
     const { summonerName } = request.body;
-    const { token, user_id } = request.headers;
+    const { challenge_token } = request.headers;
 
     try {
-      const user = await User.findOne({ _id: user_id });
+      //Test if JWT is valid
+      const userId = verifyToken(challenge_token);
 
-      const { data } = await api.get(
-        `/lol/summoner/v4/summoners/by-name/${summonerName}`,
-        { headers: { 'X-Riot-Token': token } },
-      );
-      const { summonerId } = data;
+      //If JWT is valid try to get info from Riot API
+      const data = await getAPIData(summonerName);
 
-      let summoner = await Summoner.findOne({ id: summonerId });
+      const { id, name, accountId, summonerLevel, profileIconId } = data;
+
+      let summoner = await Summoner.findOne({ summonerId: id });
 
       if (!summoner) {
         summoner = await Summoner.create({
           _id: crypto.randomUUID(),
-          nickname: data.name,
-          accountId: data.accountId,
-          summonerLevel: data.summonerLevel,
-          profileIconId: data.profileIconId,
-          summonerId: data.id,
-          userId: user._id,
+          nickname: name,
+          accountId,
+          summonerLevel,
+          profileIconId,
+          summonerId: id,
+          userId,
         });
+        return response.status(201).json(data);
       }
 
-      return response.status(201).json(data);
+      return response.status(200).json(data);
     } catch (error) {
       return response.status(400).json({ error });
     }
   },
 
   async index(request, response) {
-    const { user_id } = request.headers;
-    const summoners = await Summoner.findOne({ userId: user_id });
+    const { challenge_token } = request.headers;
+    const userId = await verifyToken(challenge_token);
 
-    return response.status(200).json(summoners);
+    try {
+      const summoners = await Summoner.find({ userId });
+      if (summoners) {
+        return response.status(200).json(summoners);
+      } else if (!summoners) {
+        return response.status(404).json({ error: 'Data not found' });
+      }
+    } catch (error) {
+      return response.status(400).json({ error });
+    }
   },
 };
