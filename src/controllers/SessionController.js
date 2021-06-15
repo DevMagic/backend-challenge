@@ -15,11 +15,10 @@ export default {
   async create(request, response) {
     const { name, email, password } = request.body;
 
-    const hash = generateHashPwd(password);
-
-    let user = await User.findOne({ email, password: hash });
-
     try {
+      const hash = generateHashPwd(password);
+      let user = await User.findOne({ name, email, password: hash });
+
       if (!user && name.length > 0 && password.length > 8) {
         user = await User.create({
           _id: crypto.randomUUID(),

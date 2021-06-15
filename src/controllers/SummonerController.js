@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 
 function verifyToken(challenge_token) {
+  let decodedToken = '';
   if (!challenge_token)
     return response
       .status(401)
@@ -15,9 +16,10 @@ function verifyToken(challenge_token) {
         .status(500)
         .json({ auth: false, message: 'Failed to authenticate token.' });
 
-    const { _id } = decoded;
-    return _id;
+    decodedToken = decoded;
   });
+
+  return decodedToken._id;
 }
 
 async function getAPIData(summonerName) {
@@ -38,11 +40,10 @@ export default {
 
     try {
       //Test if JWT is valid
-      const userId = verifyToken(challenge_token);
+      const userId = await verifyToken(challenge_token);
 
       //If JWT is valid try to get info from Riot API
       const data = await getAPIData(summonerName);
-
       const { id, name, accountId, summonerLevel, profileIconId } = data;
 
       let summoner = await Summoner.findOne({ summonerId: id });
@@ -55,12 +56,12 @@ export default {
           summonerLevel,
           profileIconId,
           summonerId: id,
-          userId,
+          userId
         });
-        return response.status(201).json(data);
+        return response.status(201).json(summoner);
       }
 
-      return response.status(200).json(data);
+      return response.status(200).json(summoner);
     } catch (error) {
       return response.status(400).json({ error });
     }

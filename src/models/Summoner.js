@@ -10,7 +10,10 @@ const SummonerSchema = new mongoose.Schema({
   summonerLevel: Number,
   profileIconId: Number,
   summonerId: String,
-  userId: String,
+  userId: {
+    type: String,
+    required: true,
+  }
 });
 
 export default mongoose.model('Summoner', SummonerSchema);

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import SessionController from './controllers/SessionController.js';
 import AuthenticationController from './controllers/AuthenticationController.js';
 import SummonerController from './controllers/SummonerController.js';
+import PlayerController from './controllers/PlayerController.js';
 
 const routes = Router();
 
@@ -14,5 +15,7 @@ routes.post('/login', AuthenticationController.create);
 
 routes.post('/summoners', SummonerController.create);
 routes.get('/summoners', SummonerController.index);
+
+routes.get('/infos', PlayerController.index);
 
 export { routes };
