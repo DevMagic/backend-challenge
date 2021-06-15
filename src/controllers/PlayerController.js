@@ -77,10 +77,11 @@ export default {
       if (nickname || summonerLevel || wins || losses) {
         function filterItems(item) {
           if (
-            String(item.nickname) === String(nickname) ||
-            Number(item.summonerLevel) === Number(summonerLevel) ||
-            Number(item.wins) === Number(wins) ||
-            Number(item.losses) === Number(losses)
+            (String(item.nickname) === String(nickname) && nickname) ||
+            (Number(item.summonerLevel) === Number(summonerLevel) &&
+              summonerLevel) ||
+            (Number(item.wins) === Number(wins) && wins) ||
+            (Number(item.losses) === Number(losses) && losses)
           ) {
             return item;
           }
