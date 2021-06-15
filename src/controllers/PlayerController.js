@@ -115,4 +115,24 @@ export default {
       return response.status(400).json({ error });
     }
   },
+
+  async delete(request, response) {
+    try {
+      const { challenge_token, _id } = request.headers;
+      const userId = await verifyToken(challenge_token);
+
+      await Summoner.findOneAndRemove(
+        { userId, _id },
+        {
+          returnOriginal: false,
+        },
+      );
+
+      return response.status(200).json({
+        message: 'successfully deleted',
+      });
+    } catch (error) {
+      return response.status(400).json({ error });
+    }
+  },
 };
