@@ -39,6 +39,7 @@ export default {
 
     try {
       const userId = await verifyToken(challenge_token);
+
       const summoner = await Summoner.findOne({ userId, nickname });
 
       const data = await getAPIData(summoner.summonerId);
@@ -63,19 +64,23 @@ export default {
         detailedList.push(summonerItem);
       }
 
-      return response.status(200).json(detailedList);
+      if (summonerLevel || wins || losses) {
+        function filterList(item) {
+          if (
+            item.summonerLevel == summonerLevel ||
+            item.wins == wins ||
+            item.losses == losses
+          ) {
+            return item;
+          }
+        }
 
-      // console.log(data);
-      // let finalData = [];
+        const filteredList = detailedList.filter(filterList);
 
-      // data.forEach((item) => {
-      //   const { wins, losses } = item;
-      //   const summonerItem = summoner;
-      //   summonerItem.concat(wins);
-
-      //   finalData.push(summonerItem);
-      //   console.log(summonerItem);
-      // });
+        return response.status(200).json(filteredList);
+      } else {
+        return response.status(200).json(detailedList);
+      }
     } catch (error) {
       return response.status(400).json({ error });
     }
