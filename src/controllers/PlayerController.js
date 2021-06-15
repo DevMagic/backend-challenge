@@ -1,6 +1,7 @@
 import Summoner from '../models/Summoner.js';
 import api from '../services/api.js';
 import jwt from 'jsonwebtoken';
+import xl from 'excel4node';
 
 function verifyToken(challenge_token) {
   let decodedToken = '';
@@ -131,6 +132,52 @@ export default {
       return response.status(200).json({
         message: 'successfully deleted',
       });
+    } catch (error) {
+      return response.status(400).json({ error });
+    }
+  },
+
+  async export(request, response) {
+    try {
+      const { challenge_token } = request.headers;
+      const userId = await verifyToken(challenge_token);
+
+      const summoners = await Summoner.find({ userId });
+      const detailedList = await getDetailedList(summoners);
+
+      const workbook = new xl.Workbook();
+      const worksheet = workbook.addWorksheet('Players list');
+      const worksheetTitles = [
+        '_id',
+        'nickname',
+        'accountId',
+        'summonerLevel',
+        'profileIconId',
+        'summonerId',
+        'userId',
+        'wins',
+        'losses',
+      ];
+
+      let titleColumnIndex = 0;
+      worksheetTitles.forEach((title) => {
+        worksheet.cell(1, (titleColumnIndex += 1)).string(title);
+      });
+
+      let rowIndex = 2;
+      detailedList.forEach((listItem) => {
+        let columnIndex = 0;
+        Object.keys(listItem).forEach((columnName) => {
+          worksheet
+            .cell(rowIndex, (columnIndex += 1))
+            .string(String(listItem[columnName]));
+        });
+        rowIndex += 1;
+      });
+
+      workbook.write('./xlsx/teste.xlsx');
+
+      return response.status(200).json(detailedList);
     } catch (error) {
       return response.status(400).json({ error });
     }

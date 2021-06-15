@@ -6,7 +6,6 @@ import 'dotenv/config';
 const server = express();
 
 mongoose.set('useFindAndModify', false);
-
 mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,

@@ -17,8 +17,9 @@ routes.post('/login', AuthenticationController.create);
 routes.post('/summoners', SummonerController.create);
 routes.get('/summoners', SummonerController.index);
 
-routes.get('/infos', PlayerController.index);
-routes.put('/infos', PlayerController.update);
-routes.delete('/infos', PlayerController.delete);
+routes.get('/players', PlayerController.index);
+routes.put('/players', PlayerController.update);
+routes.delete('/players', PlayerController.delete);
+routes.post('/players', PlayerController.export);
 
 export { routes };
