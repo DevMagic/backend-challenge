@@ -25,11 +25,41 @@ async function getAPIData(summonerId) {
   const apiToken = process.env.API_TOKEN;
 
   const { data } = await api.get(
-    `/lol/league/v4/entries/by-summoner/${summonerId}`,
-    { headers: { 'X-Riot-Token': apiToken } },
+    `/lol/league/v4/entries/by-summoner/${summonerId}?api_key=${apiToken}`,
   );
 
   return data;
+}
+
+async function getDetailedList(summoners) {
+  let detailedList = [];
+
+  for (const summoner of summoners) {
+    const data = await getAPIData(summoner.summonerId);
+    let wins = 0;
+    let losses = 0;
+
+    for (const dataItem of data) {
+      wins += dataItem.wins;
+      losses += dataItem.losses;
+    }
+
+    const detailedListItem = {
+      _id: summoner._id,
+      nickname: summoner.nickname,
+      accountId: summoner.accountId,
+      summonerLevel: summoner.summonerLevel,
+      profileIconId: summoner.profileIconId,
+      summonerId: summoner.summonerId,
+      userId: summoner.userId,
+      wins,
+      losses,
+    };
+
+    detailedList.push(detailedListItem);
+  }
+
+  return detailedList;
 }
 
 export default {
@@ -40,42 +70,23 @@ export default {
     try {
       const userId = await verifyToken(challenge_token);
 
-      const summoner = await Summoner.findOne({ userId, nickname });
+      const summoners = await Summoner.find({ userId });
 
-      const data = await getAPIData(summoner.summonerId);
+      const detailedList = await getDetailedList(summoners);
 
-      let detailedList = [];
-
-      for (const item of data) {
-        const { wins, losses } = item;
-
-        const summonerItem = {
-          _id: summoner._id,
-          nickname: summoner.nickname,
-          accountId: summoner.accountId,
-          summonerLevel: summoner.summonerLevel,
-          profileIconId: summoner.profileIconId,
-          summonerId: summoner.summonerId,
-          userId: summoner.userId,
-          wins,
-          losses,
-        };
-
-        detailedList.push(summonerItem);
-      }
-
-      if (summonerLevel || wins || losses) {
-        function filterList(item) {
+      if (nickname || summonerLevel || wins || losses) {
+        function filterItems(item) {
           if (
-            item.summonerLevel == summonerLevel ||
-            item.wins == wins ||
-            item.losses == losses
+            String(item.nickname) === String(nickname) ||
+            Number(item.summonerLevel) === Number(summonerLevel) ||
+            Number(item.wins) === Number(wins) ||
+            Number(item.losses) === Number(losses)
           ) {
             return item;
           }
         }
 
-        const filteredList = detailedList.filter(filterList);
+        const filteredList = detailedList.filter(filterItems);
 
         return response.status(200).json(filteredList);
       } else {
