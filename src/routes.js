@@ -17,5 +17,6 @@ routes.post('/summoners', SummonerController.create);
 routes.get('/summoners', SummonerController.index);
 
 routes.get('/infos', PlayerController.index);
+routes.put('/infos', PlayerController.update);
 
 export { routes };

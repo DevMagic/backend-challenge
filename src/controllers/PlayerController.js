@@ -64,14 +64,12 @@ async function getDetailedList(summoners) {
 
 export default {
   async index(request, response) {
-    const { challenge_token } = request.headers;
-    const { nickname, summonerLevel, wins, losses } = request.query;
-
     try {
+      const { challenge_token } = request.headers;
+      const { nickname, summonerLevel, wins, losses } = request.query;
       const userId = await verifyToken(challenge_token);
 
       const summoners = await Summoner.find({ userId });
-
       const detailedList = await getDetailedList(summoners);
 
       if (nickname || summonerLevel || wins || losses) {
@@ -93,6 +91,26 @@ export default {
       } else {
         return response.status(200).json(detailedList);
       }
+    } catch (error) {
+      return response.status(400).json({ error });
+    }
+  },
+
+  async update(request, response) {
+    try {
+      const { challenge_token, _id } = request.headers;
+      const { summonerName, summonerLevel } = request.body;
+      const userId = await verifyToken(challenge_token);
+
+      const summoner = await Summoner.findOneAndUpdate(
+        { userId, _id },
+        { nickname: summonerName, summonerLevel },
+        {
+          returnOriginal: false,
+        },
+      );
+
+      return response.status(200).json(summoner);
     } catch (error) {
       return response.status(400).json({ error });
     }
