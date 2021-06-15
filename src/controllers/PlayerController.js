@@ -2,6 +2,7 @@ import Summoner from '../models/Summoner.js';
 import api from '../services/api.js';
 import jwt from 'jsonwebtoken';
 import xl from 'excel4node';
+import path from 'path';
 
 function verifyToken(challenge_token) {
   let decodedToken = '';
@@ -70,6 +71,7 @@ export default {
       const { nickname, summonerLevel, wins, losses } = request.query;
       const userId = await verifyToken(challenge_token);
 
+      //Many requests to the API so it takes a while
       const summoners = await Summoner.find({ userId });
       const detailedList = await getDetailedList(summoners);
 
@@ -142,11 +144,12 @@ export default {
       const { challenge_token } = request.headers;
       const userId = await verifyToken(challenge_token);
 
+      //Many requests to the API so it takes a while
       const summoners = await Summoner.find({ userId });
       const detailedList = await getDetailedList(summoners);
 
       const workbook = new xl.Workbook();
-      const worksheet = workbook.addWorksheet('Players list');
+      const worksheet = workbook.addWorksheet('Players List');
       const worksheetTitles = [
         '_id',
         'nickname',
@@ -175,9 +178,10 @@ export default {
         rowIndex += 1;
       });
 
-      workbook.write('./xlsx/teste.xlsx');
+      const date = Date.now();
 
-      return response.status(200).json(detailedList);
+      // workbook.write(`./xlsx/playerslist-${date}.xlsx`);
+      return workbook.write(`playerslist-${date}.xlsx`, response);
     } catch (error) {
       return response.status(400).json({ error });
     }
