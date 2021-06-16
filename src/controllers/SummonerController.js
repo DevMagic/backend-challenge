@@ -35,10 +35,9 @@ async function getAPIData(summonerName) {
 
 export default {
   async create(request, response) {
-    const { summonerName } = request.body;
-    const { challenge_token } = request.headers;
-
     try {
+      const { summonerName } = request.body;
+      const { challenge_token } = request.headers;
       //Test if JWT is valid
       const userId = await verifyToken(challenge_token);
 
@@ -56,7 +55,7 @@ export default {
           summonerLevel,
           profileIconId,
           summonerId: id,
-          userId
+          userId,
         });
         return response.status(201).json(summoner);
       }
@@ -68,10 +67,9 @@ export default {
   },
 
   async index(request, response) {
-    const { challenge_token } = request.headers;
-    const userId = await verifyToken(challenge_token);
-
     try {
+      const { challenge_token } = request.headers;
+      const userId = await verifyToken(challenge_token);
       const summoners = await Summoner.find({ userId });
       if (summoners) {
         return response.status(200).json(summoners);

@@ -13,9 +13,8 @@ function generateHashPwd(password) {
 
 export default {
   async create(request, response) {
-    const { name, email, password } = request.body;
-
     try {
+      const { name, email, password } = request.body;
       const hash = generateHashPwd(password);
       let user = await User.findOne({ name, email, password: hash });
 
