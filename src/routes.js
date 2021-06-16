@@ -6,10 +6,6 @@ import PlayerController from './controllers/PlayerController.js';
 
 const routes = Router();
 
-routes.get('/', (request, response) => {
-  return response.json({ message: 'server online' });
-});
-
 routes.post('/signup', UserController.create);
 
 routes.post('/login', AuthenticationController.create);

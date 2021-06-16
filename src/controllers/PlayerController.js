@@ -97,6 +97,26 @@ function createXLSX(detailedList) {
   return workbook;
 }
 
+function createFileredList(
+  detailedList,
+  nickname,
+  summonerLevel,
+  wins,
+  losses,
+) {
+  function filterItems(item) {
+    if (
+      (String(item.nickname) === String(nickname) && nickname) ||
+      (Number(item.summonerLevel) === Number(summonerLevel) && summonerLevel) ||
+      (Number(item.wins) === Number(wins) && wins) ||
+      (Number(item.losses) === Number(losses) && losses)
+    ) {
+      return item;
+    }
+  }
+  return detailedList.filter(filterItems);
+}
+
 export default {
   async index(request, response) {
     try {
@@ -109,19 +129,13 @@ export default {
       const detailedList = await getDetailedList(summoners);
 
       if (nickname || summonerLevel || wins || losses) {
-        function filterItems(item) {
-          if (
-            (String(item.nickname) === String(nickname) && nickname) ||
-            (Number(item.summonerLevel) === Number(summonerLevel) &&
-              summonerLevel) ||
-            (Number(item.wins) === Number(wins) && wins) ||
-            (Number(item.losses) === Number(losses) && losses)
-          ) {
-            return item;
-          }
-        }
-
-        const filteredList = detailedList.filter(filterItems);
+        const filteredList = createFileredList(
+          detailedList,
+          nickname,
+          summonerLevel,
+          wins,
+          losses,
+        );
 
         return response.status(200).json(filteredList);
       } else {
