@@ -1,7 +1,11 @@
 import Summoner from '../models/Summoner.js';
+import aws from '../services/aws.js';
 import api from '../services/api.js';
 import jwt from 'jsonwebtoken';
 import xl from 'excel4node';
+import fs from 'fs';
+import AWS from 'aws-sdk';
+import path from 'path';
 
 function verifyToken(challenge_token) {
   let decodedToken = '';
@@ -117,6 +121,69 @@ function createFileredList(
   return detailedList.filter(filterItems);
 }
 
+async function createBucket() {
+  const ID = await aws.get('/ID.txt');
+  const KEY = await aws.get('/KEY.txt');
+  const id = ID.data;
+  const key = KEY.data;
+  const s3 = new AWS.S3({
+    accessKeyId: id,
+    secretAccessKey: key,
+  });
+  const BUCKET_NAME = 'devmagic-challenge';
+
+  const params = {
+    Bucket: BUCKET_NAME,
+  };
+
+  s3.createBucket(params, (error, data) => {
+    if (error) console.error({ error, type: 'Error on bucket' });
+    // else {
+    //   console.log(data.Location);
+    // }
+  });
+}
+
+async function uploadFile(filename, date) {
+  const BUCKET_NAME = 'devmagic-challenge';
+  const objetctKey = `playerslist-${date}.xlsx`;
+  const ID = await aws.get('/ID.txt');
+  const KEY = await aws.get('/KEY.txt');
+  const id = ID.data;
+  const key = KEY.data;
+  const s3 = new AWS.S3({
+    accessKeyId: id,
+    secretAccessKey: key,
+  });
+
+  const fileContent = fs.readFileSync(filename);
+
+  const fileParams = {
+    Bucket: BUCKET_NAME,
+    Key: objetctKey,
+    Body: fileContent,
+    ContentType: 'application/octet-stream',
+    ACL: 'public-read',
+  };
+
+  s3.upload(fileParams, (error, data) => {
+    if (error) console.error({ error, type: 'Error uploading' });
+    // else {
+    //   console.log('Uploaded', data.Location);
+    // }
+  });
+
+  const signedUrlExpireSeconds = 60 * 5; // your expiry time in seconds.
+
+  const url = s3.getSignedUrl('getObject', {
+    Bucket: BUCKET_NAME,
+    Key: objetctKey,
+    Expires: signedUrlExpireSeconds,
+  });
+
+  return url;
+}
+
 export default {
   async index(request, response) {
     try {
@@ -154,7 +221,10 @@ export default {
 
       const summoner = await Summoner.findOneAndUpdate(
         { userId, _id },
-        { nickname: summonerName, summonerLevel },
+        {
+          nickname: summonerName,
+          summonerLevel: summonerLevel,
+        },
         {
           returnOriginal: false,
         },
@@ -195,13 +265,19 @@ export default {
       const summoners = await Summoner.find({ userId });
       const detailedList = await getDetailedList(summoners);
 
-      const workbook = createXLSX(detailedList);
       const date = Date.now();
+      const pathToFile = path.resolve(`./tmp/playerslist-${date}.xlsx`);
 
-      // workbook.write(`./xlsx/playerslist-${date}.xlsx`); //Test if the xlsx is right
-      return workbook.write(`playerslist-${date}.xlsx`, response);
+      const workbook = createXLSX(detailedList);
+      workbook.write(pathToFile); //Test if the xlsx is right
+
+      await createBucket();
+      const xlsxURL = await uploadFile(pathToFile, date);
+
+      return response.status(200).json({ url: xlsxURL });
+      // return workbook.write(`playerslist-${date}.xlsx`, response);
     } catch (error) {
-      return response.status(400).json({ error });
+      return response.status(400).json({ error, type: 'Error on response' });
     }
   },
 };
