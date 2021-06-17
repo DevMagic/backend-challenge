@@ -36,7 +36,9 @@ export default {
         return response.status(404).json({ message: 'User not found' });
       }
     } catch (error) {
-      return response.status(400).json({ error });
+      return response
+        .status(400)
+        .json({ error, type: 'Error authenticating user' });
     }
   },
 };

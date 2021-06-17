@@ -31,7 +31,7 @@ export default {
         return response.status(400).json({ error: 'User already exists' });
       }
     } catch (error) {
-      return response.status(400).json({ error });
+      return response.status(400).json({ error, type: 'Error creating user' });
     }
   },
 };

@@ -62,7 +62,9 @@ export default {
 
       return response.status(200).json(summoner);
     } catch (error) {
-      return response.status(400).json({ error });
+      return response
+        .status(400)
+        .json({ error, type: 'Error creating summoner' });
     }
   },
 
@@ -77,7 +79,9 @@ export default {
         return response.status(404).json({ error: 'Data not found' });
       }
     } catch (error) {
-      return response.status(400).json({ error });
+      return response
+        .status(400)
+        .json({ error, type: 'Error listing summoners' });
     }
   },
 };

@@ -121,6 +121,17 @@ function createFileredList(
   return detailedList.filter(filterItems);
 }
 
+function deleteXLSX(pathToFile) {
+  fs.stat(pathToFile, function (error) {
+    if (error) return console.error(error);
+
+    fs.unlinkSync(pathToFile, function (error) {
+      if (error) return console.log(error);
+      console.log('file deleted successfully');
+    });
+  });
+}
+
 async function createBucket() {
   const ID = await aws.get('/ID.txt');
   const KEY = await aws.get('/KEY.txt');
@@ -209,7 +220,9 @@ export default {
         return response.status(200).json(detailedList);
       }
     } catch (error) {
-      return response.status(400).json({ error });
+      return response
+        .status(400)
+        .json({ error, type: 'Error listing players' });
     }
   },
 
@@ -232,7 +245,9 @@ export default {
 
       return response.status(200).json(summoner);
     } catch (error) {
-      return response.status(400).json({ error });
+      return response
+        .status(400)
+        .json({ error, type: 'Error updating player' });
     }
   },
 
@@ -252,7 +267,9 @@ export default {
         message: 'successfully deleted',
       });
     } catch (error) {
-      return response.status(400).json({ error });
+      return response
+        .status(400)
+        .json({ error, type: 'Error deleting player' });
     }
   },
 
@@ -273,12 +290,12 @@ export default {
 
       await createBucket();
       const xlsxURL = await uploadFile(pathToFile, date);
-      fs.unlinkSync(pathToFile);
+      deleteXLSX(pathToFile);
 
       return response.status(200).json({ url: xlsxURL });
       // return workbook.write(`playerslist-${date}.xlsx`, response);
     } catch (error) {
-      return response.status(400).json({ error, type: 'Error on response' });
+      return response.status(400).json({ error, type: 'Error exporting file' });
     }
   },
 };
