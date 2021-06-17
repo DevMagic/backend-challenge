@@ -273,6 +273,7 @@ export default {
 
       await createBucket();
       const xlsxURL = await uploadFile(pathToFile, date);
+      fs.unlinkSync(pathToFile);
 
       return response.status(200).json({ url: xlsxURL });
       // return workbook.write(`playerslist-${date}.xlsx`, response);
