@@ -12,6 +12,12 @@ export default class UserController {
 
     const userRepository = getRepository(User);
 
+    const userExists = await userRepository.findOne({ where: { email } });
+
+    if (userExists) {
+      return response.status(409).json({ error: 'Já existe um usuário cadastrado com o mesmo email' });
+    }
+
     const hashedPassword = await generateHashedPassword(password);
 
     const [user, error] = await prettifyPromise(userRepository.save({ name, email, password: hashedPassword }));
