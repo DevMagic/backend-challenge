@@ -1,0 +1,16 @@
+{
+  "name": "backend-challenge",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:SkyLkr/backend-challenge.git",
+  "author": "Adriano Rocha <adriano.olr@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules --no-notify src/server.ts"
+  },
+  "devDependencies": {
+    "ts-node-dev": "^1.1.6",
+    "typescript": "^4.3.4"
+  },
+  "dependencies": {}
+}
