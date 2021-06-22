@@ -21,7 +21,7 @@ export default class UserController {
       return response.status(400).json({ error: 'Erro ao criar usuário' });
     }
 
-    return response.json(user);
+    return response.status(201).json(user);
   }
 
   static async authenticate(request: Request, response: Response) {
