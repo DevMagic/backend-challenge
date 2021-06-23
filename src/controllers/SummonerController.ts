@@ -107,4 +107,29 @@ export default class SummonerController {
 
     return response.json(detailedSummoners);
   }
+
+  static async update(request: AuthenticatedRequest, response: Response) {
+    const { id } = request.params;
+    const { summonerName, summonerLevel } = request.body;
+
+    const summonerRepository = getRepository(Summoner);
+
+    const [summoner, findSummonerError] = await prettifyPromise(summonerRepository.findOneOrFail(id));
+
+    if (findSummonerError) {
+      return response.status(404).json({ error: 'Summoner não encontrado' });
+    }
+
+    summoner.nickname = summonerName ?? summoner.nickname;
+    summoner.summonerLevel = summonerLevel ?? summoner.summonerLevel;
+
+    const [, error] = await prettifyPromise(summonerRepository.save(summoner));
+
+    if (error) {
+      console.error(error.stack);
+      return response.status(500).json({ error: 'Erro ao salvar alterações no summoner' });
+    }
+
+    return response.json(summoner);
+  }
 }

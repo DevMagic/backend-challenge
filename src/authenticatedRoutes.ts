@@ -10,5 +10,6 @@ authenticatedRoutes.use(authenticationMiddleware);
 authenticatedRoutes.get('/summoners', SummonerController.index);
 authenticatedRoutes.get('/summoners/detail', SummonerController.detail);
 authenticatedRoutes.post('/summoners', SummonerController.create);
+authenticatedRoutes.put('/summoners/:id', SummonerController.update);
 
 export default authenticatedRoutes;
