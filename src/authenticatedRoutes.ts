@@ -7,6 +7,7 @@ const authenticatedRoutes = Router();
 
 authenticatedRoutes.use(authenticationMiddleware);
 
-authenticatedRoutes.post('/summoners', SummonerController.create)
+authenticatedRoutes.get('/summoners', SummonerController.index);
+authenticatedRoutes.post('/summoners', SummonerController.create);
 
 export default authenticatedRoutes;

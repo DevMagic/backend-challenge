@@ -45,4 +45,23 @@ export default class SummonerController {
 
     return response.status(201).send();
   }
+
+  static async index(request: AuthenticatedRequest, response: Response) {
+    const summonerRepository = getRepository(Summoner);
+
+    const [summoners, findSummonersError] = await prettifyPromise(summonerRepository.find({
+      where: {
+        user: {
+          id: request.userId,
+        },
+      },
+    }));
+
+    if (findSummonersError) {
+      console.error(findSummonersError.stack);
+      return response.status(500).json({ error: 'Erro ao listar summoners' });
+    }
+
+    return response.json(summoners);
+  }
 }
