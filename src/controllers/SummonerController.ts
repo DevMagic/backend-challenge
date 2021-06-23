@@ -6,6 +6,7 @@ import { User } from '../entity/User';
 
 import { AuthenticatedRequest } from '../middlewares/authenticationMiddleware';
 import riotApi from '../services/riotApi';
+import exportSummonersToXlsx from '../utils/exportSummonersToXlsx';
 import prettifyPromise from '../utils/prettifyPromise';
 
 export default class SummonerController {
@@ -141,5 +142,33 @@ export default class SummonerController {
     await summonerRepository.delete({ id, user: { id: request.userId } });
 
     return response.json({ message: 'successfully deleted' });
+  }
+
+  static async export(request: AuthenticatedRequest, response: Response) {
+    const summonerRepository = getRepository(Summoner);
+
+    const [summoners, findSummonersError] = await prettifyPromise(
+      summonerRepository.find({
+        where: {
+          user: {
+            id: request.userId,
+          },
+        },
+      }),
+    );
+
+    if (findSummonersError) {
+      console.error(findSummonersError.stack);
+      return response.status(500).json({ error: 'Erro ao buscar summoners' });
+    }
+
+    const exportFile = exportSummonersToXlsx(summoners);
+
+    return response
+      .header({
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition': 'attachment; filename=summoners.xlsx',
+      })
+      .send(exportFile);
   }
 }
