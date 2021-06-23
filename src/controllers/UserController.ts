@@ -1,3 +1,4 @@
+import debug from 'debug';
 import { Request, Response } from 'express';
 import { getRepository } from 'typeorm';
 
@@ -5,6 +6,8 @@ import { User } from '../entity/User';
 import { generateAccessToken } from '../utils/accessToken';
 import { compareHashedPassword, generateHashedPassword } from '../utils/hashPassword';
 import prettifyPromise from '../utils/prettifyPromise';
+
+const log = debug('api:controllers:user');
 
 export default class UserController {
   static async create(request: Request, response: Response) {
@@ -18,12 +21,12 @@ export default class UserController {
       return response.status(409).json({ error: 'Já existe um usuário cadastrado com o mesmo email' });
     }
 
-    const hashedPassword = await generateHashedPassword(password);
+    const [hashedPassword, passwordError] = await prettifyPromise(generateHashedPassword(password));
 
-    const [user, error] = await prettifyPromise(userRepository.save({ name, email, password: hashedPassword }));
-
-    if (error) {
-      console.error(error.stack);
+    const [user, saveUserError] = await prettifyPromise(userRepository.save({ name, email, password: hashedPassword }));
+  
+    if (passwordError || saveUserError) {
+      log((passwordError || saveUserError).stack);
       return response.status(400).json({ error: 'Erro ao criar usuário' });
     }
 
@@ -38,7 +41,7 @@ export default class UserController {
     const [user, findUserError] = await prettifyPromise(userRepository.findOneOrFail({ where: { name, email } }));
 
     if (findUserError) {
-      console.error(findUserError);
+      log(findUserError);
       return response.status(404).json({ error: 'Usuário não encontrado' });
     }
 
@@ -51,7 +54,7 @@ export default class UserController {
     const [token, generateJwtError] = await prettifyPromise(generateAccessToken(user));
 
     if (generateJwtError) {
-      console.error(generateJwtError.stack);
+      log(generateJwtError.stack);
       return response.status(500).json({ error: 'Erro na autenticação do usuário' });
     }
 
