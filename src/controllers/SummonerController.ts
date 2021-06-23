@@ -132,4 +132,14 @@ export default class SummonerController {
 
     return response.json(summoner);
   }
+
+  static async delete(request: AuthenticatedRequest, response: Response) {
+    const { id } = request.params;
+
+    const summonerRepository = getRepository(Summoner);
+
+    await summonerRepository.delete({ id, user: { id: request.userId } });
+
+    return response.json({ message: 'successfully deleted' });
+  }
 }

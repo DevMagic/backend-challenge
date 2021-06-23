@@ -11,5 +11,6 @@ authenticatedRoutes.get('/summoners', SummonerController.index);
 authenticatedRoutes.get('/summoners/detail', SummonerController.detail);
 authenticatedRoutes.post('/summoners', SummonerController.create);
 authenticatedRoutes.put('/summoners/:id', SummonerController.update);
+authenticatedRoutes.delete('/summoners/:id', SummonerController.delete);
 
 export default authenticatedRoutes;
