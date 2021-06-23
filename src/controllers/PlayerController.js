@@ -9,16 +9,17 @@ import path from 'path';
 
 function verifyToken(challenge_token) {
   let decodedToken = '';
-  if (!challenge_token)
-    return response
-      .status(401)
-      .json({ auth: false, message: 'No token provided.' });
 
+  if (!challenge_token) {
+    return (decodedToken = { auth: false, message: 'No token provided.' });
+  }
   jwt.verify(challenge_token, process.env.SECRET_KEY, (err, decoded) => {
-    if (err)
-      return response
-        .status(500)
-        .json({ auth: false, message: 'Failed to authenticate token.' });
+    if (err) {
+      return (decodedToken = {
+        auth: false,
+        message: 'Failed to authenticate token.',
+      });
+    }
 
     decodedToken = decoded;
   });
@@ -67,38 +68,44 @@ async function getDetailedList(summoners) {
   return detailedList;
 }
 
-function createXLSX(detailedList) {
-  const workbook = new xl.Workbook();
-  const worksheet = workbook.addWorksheet('Players List');
-  const worksheetTitles = [
-    '_id',
-    'nickname',
-    'accountId',
-    'summonerLevel',
-    'profileIconId',
-    'summonerId',
-    'userId',
-    'wins',
-    'losses',
-  ];
+function createXLSX(detailedList, pathToFile) {
+  try {
+    const workbook = new xl.Workbook();
+    const worksheet = workbook.addWorksheet('Players List');
+    const worksheetTitles = [
+      '_id',
+      'nickname',
+      'accountId',
+      'summonerLevel',
+      'profileIconId',
+      'summonerId',
+      'userId',
+      'wins',
+      'losses',
+    ];
 
-  let titleColumnIndex = 0;
-  worksheetTitles.forEach((title) => {
-    worksheet.cell(1, (titleColumnIndex += 1)).string(title);
-  });
-
-  let rowIndex = 2;
-  detailedList.forEach((listItem) => {
-    let columnIndex = 0;
-    Object.keys(listItem).forEach((columnName) => {
-      worksheet
-        .cell(rowIndex, (columnIndex += 1))
-        .string(String(listItem[columnName]));
+    let titleColumnIndex = 0;
+    worksheetTitles.forEach((title) => {
+      worksheet.cell(1, (titleColumnIndex += 1)).string(title);
     });
-    rowIndex += 1;
-  });
 
-  return workbook;
+    let rowIndex = 2;
+    detailedList.forEach((listItem) => {
+      let columnIndex = 0;
+      Object.keys(listItem).forEach((columnName) => {
+        worksheet
+          .cell(rowIndex, (columnIndex += 1))
+          .string(String(listItem[columnName]));
+      });
+      rowIndex += 1;
+    });
+
+    workbook.write(pathToFile);
+
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function createFileredList(
@@ -276,24 +283,46 @@ export default {
   async export(request, response) {
     try {
       const { challenge_token } = request.headers;
+
+      if (!challenge_token) {
+        return response.status(400).json({ error: 'User not authenticated' });
+      }
+
       const userId = await verifyToken(challenge_token);
+
+      if (userId.auth) {
+        return response.status(400).json({ error: userId.message });
+      }
 
       //Many requests to the API so it takes a while
       const summoners = await Summoner.find({ userId });
       const detailedList = await getDetailedList(summoners);
 
+      if (detailedList.length === 0) {
+        return response
+          .status(400)
+          .json({ error: 'Can not list players on database' });
+      }
+
       const date = Date.now();
       const pathToFile = path.resolve(`./tmp/playerslist-${date}.xlsx`);
+      const workbook = createXLSX(detailedList, pathToFile);
+      // return workbook.write(`playerslist-${date}.xlsx`, response);
 
-      const workbook = createXLSX(detailedList);
-      workbook.write(pathToFile); //Test if the xlsx is right
+      if (!workbook) {
+        return response.status(400).json({ error: 'Can not create xlsx file' });
+      }
 
       await createBucket();
       const xlsxURL = await uploadFile(pathToFile, date);
       deleteXLSX(pathToFile);
 
+      if (!xlsxURL) {
+        return response
+          .status(400)
+          .json({ error: 'Can not upload file to database' });
+      }
       return response.status(200).json({ url: xlsxURL });
-      // return workbook.write(`playerslist-${date}.xlsx`, response);
     } catch (error) {
       return response.status(400).json({ error, type: 'Error exporting file' });
     }
