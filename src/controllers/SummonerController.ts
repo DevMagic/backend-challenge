@@ -1,3 +1,5 @@
+import { AxiosError } from 'axios';
+import { debug } from 'debug';
 import { Response } from 'express';
 import { getRepository } from 'typeorm';
 
@@ -8,6 +10,8 @@ import { AuthenticatedRequest } from '../middlewares/authenticationMiddleware';
 import riotApi from '../services/riotApi';
 import exportSummonersToXlsx from '../utils/exportSummonersToXlsx';
 import prettifyPromise from '../utils/prettifyPromise';
+
+const log = debug('api:controllers:summoner');
 
 export default class SummonerController {
   static async create(request: AuthenticatedRequest, response: Response) {
@@ -25,11 +29,25 @@ export default class SummonerController {
     const [apiResponse, apiError] = await prettifyPromise(riotApi.get(`/lol/summoner/v4/summoners/by-name/${summonerName}`));
 
     if (apiError) {
+      if ((apiError as AxiosError).response?.status === 404) {
+        return response.status(404).json({ error: 'Summoner não encontrado' });
+      }
+
       return response.status(500).json({ error: 'Erro ao se comunicar com a API da Rito' });
     }
 
     const { id, name, accountId, summonerLevel, profileIconId } = apiResponse.data;
 
+    const summonerExists = await summonerRepository.findOne({
+      where: [
+        { accountId },
+        { summonerId: id }
+      ],
+    });
+
+    if (summonerExists) {
+      return response.status(409).json({ error: 'Summoner já foi cadastrado no sistema' });
+    }
 
     const [summoner, createSummonerError] = await prettifyPromise(summonerRepository.save({
       nickname: name,
@@ -59,7 +77,7 @@ export default class SummonerController {
     }));
 
     if (findSummonersError) {
-      console.error(findSummonersError.stack);
+      log(findSummonersError.stack);
       return response.status(500).json({ error: 'Erro ao listar summoners' });
     }
 
@@ -78,33 +96,40 @@ export default class SummonerController {
     }));
 
     if (findSummonersError) {
-      console.error(findSummonersError.stack);
+      log(findSummonersError.stack);
       return response.status(500).json({ error: 'Erro ao listar summoners' });
     }
 
-    const detailedSummoners = await Promise.all(summoners.map(async summoner => {
-      type ResponseType = Array<{ wins: number, losses: number }>;
+    const [detailedSummoners, fetchSummonersDetailsError] = await prettifyPromise(
+      Promise.all(summoners.map(async summoner => {
+        type ResponseType = Array<{ wins: number, losses: number }>;
 
-      const apiResponse = await riotApi.get<ResponseType>(
-        `/lol/league/v4/entries/by-summoner/${summoner.summonerId}`
-      );
+        const apiResponse = await riotApi.get<ResponseType>(
+          `/lol/league/v4/entries/by-summoner/${summoner.summonerId}`
+        );
 
-      const wins = apiResponse
-        .data
-        .map(entry => entry.wins)
-        .reduce((sum, wins) => sum + wins, 0);
+        const wins = apiResponse
+          .data
+          .map(entry => entry.wins)
+          .reduce((sum, wins) => sum + wins, 0);
 
-      const losses = apiResponse
-        .data
-        .map(entry => entry.losses)
-        .reduce((sum, losses) => sum + losses, 0);
+        const losses = apiResponse
+          .data
+          .map(entry => entry.losses)
+          .reduce((sum, losses) => sum + losses, 0);
 
-      return {
-        ...summoner,
-        wins,
-        losses,
-      }
-    }));
+        return {
+          ...summoner,
+          wins,
+          losses,
+        }
+      }))
+    );
+
+    if (fetchSummonersDetailsError) {
+      log(fetchSummonersDetailsError);
+      return response.status(500).json({ error: 'Erro ao se comunicar com a API da Rito Gomes' });
+    }
 
     return response.json(detailedSummoners);
   }
@@ -127,7 +152,7 @@ export default class SummonerController {
     const [, error] = await prettifyPromise(summonerRepository.save(summoner));
 
     if (error) {
-      console.error(error.stack);
+      log(error.stack);
       return response.status(500).json({ error: 'Erro ao salvar alterações no summoner' });
     }
 
@@ -139,7 +164,11 @@ export default class SummonerController {
 
     const summonerRepository = getRepository(Summoner);
 
-    await summonerRepository.delete({ id, user: { id: request.userId } });
+    const [, error] = await prettifyPromise(summonerRepository.delete({ id, user: { id: request.userId } }));
+
+    if (error) {
+      return response.status(500).json({ error: 'Erro ao remover summoner' });
+    }
 
     return response.json({ message: 'successfully deleted' });
   }
@@ -158,7 +187,7 @@ export default class SummonerController {
     );
 
     if (findSummonersError) {
-      console.error(findSummonersError.stack);
+      log(findSummonersError.stack);
       return response.status(500).json({ error: 'Erro ao buscar summoners' });
     }
 

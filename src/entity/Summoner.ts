@@ -12,10 +12,10 @@ export class Summoner {
   @Column({ unique: true })
   accountId: string;
 
-  @Column()
+  @Column({ nullable: true })
   summonerLevel: string;
 
-  @Column()
+  @Column({ nullable: true })
   profileIconId: string;
 
   @Column({ unique: true })
