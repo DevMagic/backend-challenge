@@ -12,7 +12,6 @@ exports.cadSummoner = async(req,res)=>{
         } 
         const user = await axios.get(encodeURI(`${process.env.LOL_URL}/lol/summoner/v4/summoners/by-name/${summonerName}?api_key=${process.env.LOL_KEY}`))
         const idSummoner = user.data.id
-        console.log(idSummoner)
         const exist = await Summoner.findOne({"summonerId":idSummoner})
         if(exist){
             console.log(exist)
@@ -37,5 +36,16 @@ exports.cadSummoner = async(req,res)=>{
     
         return res.status(400).send({"error": "Error registering summoner"})
  
+    }
+}
+
+exports.showAllSummoners = async (req, res)=>{
+    try{
+        const summoners = await Summoner.find({})
+        console.log(summoners)
+        res.status(200).send(summoners)
+    }catch(err){
+        console.log(err)
+        return res.status(400).send({"error": "Error in database"})
     }
 }
