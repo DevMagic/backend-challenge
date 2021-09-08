@@ -42,8 +42,25 @@ exports.cadSummoner = async(req,res)=>{
 exports.showAllSummoners = async (req, res)=>{
     try{
         const summoners = await Summoner.find({})
-        console.log(summoners)
         res.status(200).send(summoners)
+    }catch(err){
+        console.log(err)
+        return res.status(400).send({"error": "Error in database"})
+    }
+}
+
+exports.deleteSummoner = async (req, res)=>{
+    try{
+        const {idSummoner} = req.body
+        if(!idSummoner){
+            return res.status(400).send({"error": "Empty summoner id"})
+        }
+        const user = await Summoner.findByIdAndDelete({"_id":idSummoner})
+        if(!user){
+            return res.status(404).send({"error": "Summoner not found"})
+        }
+        await Summoner.findByIdAndDelete({"_id":idSummoner})
+        res.status(200).send({"message": "Summoner successfully removed"})
     }catch(err){
         console.log(err)
         return res.status(400).send({"error": "Error in database"})
