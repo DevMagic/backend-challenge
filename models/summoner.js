@@ -1,7 +1,7 @@
 const Mongoose = require("../database/mongodb")
 
 const SummonerSchema = mongoose.Schema({
-    id:{
+    _id:{
         type: Number
     },
     nickname:{

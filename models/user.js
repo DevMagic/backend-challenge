@@ -1,10 +1,9 @@
-
 const Mongoose = require("../database/mongodb")
+const bcrypt = require("bcrypt")
 
 const UserSchema = new Mongoose.Schema({
-    id:{
-        type: Number
-
+    _id:{
+        type: String
     },
     name:{
         type: String,
@@ -20,6 +19,7 @@ const UserSchema = new Mongoose.Schema({
         required: true
     }
 })
+
 
 const User = Mongoose.model("User",UserSchema)
 module.exports = User
