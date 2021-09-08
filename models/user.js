@@ -1,5 +1,4 @@
 const Mongoose = require("../database/mongodb")
-const bcrypt = require("bcrypt")
 
 const UserSchema = new Mongoose.Schema({
     _id:{

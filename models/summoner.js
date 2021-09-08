@@ -1,15 +1,15 @@
-const Mongoose = require("../database/mongodb")
+const mongoose = require("../database/mongodb")
 
 const SummonerSchema = mongoose.Schema({
     _id:{
-        type: Number
+        type: String
     },
     nickname:{
         type: String,
         required: true,       
     },
     accountId:{
-        type: Number,
+        type: String,
         unique: true
     },
     summonerLevel:{
@@ -19,7 +19,7 @@ const SummonerSchema = mongoose.Schema({
         type: Number
     },
     summonerId:{
-        type: Number,
+        type: String,
         unique: true
     },
     userId:{
@@ -27,5 +27,5 @@ const SummonerSchema = mongoose.Schema({
     }
 })
 
-const Summoner = Mongoose.model("Summoner", SummonerSchema);
+const Summoner = mongoose.model("Summoner", SummonerSchema);
 module.exports = Summoner
