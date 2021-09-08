@@ -1,7 +1,8 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt")
 const {v4:uuid} = require("uuid")
-
+const jwt = require("jsonwebtoken")
+require('dotenv').config({path:'./.env'})
 exports.createUser = async (req, res) => {
   const {name, email, password} = req.body
   try{
@@ -10,7 +11,8 @@ exports.createUser = async (req, res) => {
         }
         await User.findOne({email}).then((result)=>{
         if(result) {
-            return res.status(400).send({"error":"E-mail already registered"})
+            console.log(result)
+            return res.status(409).send({"error":"E-mail already registered"})
         }
         else{
             (async()=>{
@@ -33,10 +35,32 @@ exports.createUser = async (req, res) => {
 
 };
 
-exports.login = (req, res) => {
-
+exports.login = async (req, res) => {
+    const {name, email, password} = req.body
+    
     try{
-
+        if(!name || !email || !password){
+            return res.status(400).send({"error":"Empety fieds"})
+        }
+    await User.findOne({email: email}).then((result)=>{
+        if(result){
+            bcrypt.compare(password, result.password, async(err, resultPassword)=>{
+                if(resultPassword && (result.name === name)){
+                    const token = jwt.sign({
+                        _id: result._id,
+                        email: result.email
+                    },process.env.JWT_KEY,{
+                        expiresIn: "1H"
+                    })
+                    return res.status(400).send({"token":token})
+                }
+                return res.status(401).send({"error":"Authentication failed"})
+            })
+            
+        }else{
+            return res.status(401).send({"error":"Authentication failed"})
+        }
+    })
     }catch(err){
       console.log(err)
     }

@@ -3,7 +3,6 @@ const app = express();
 const mongoose = require("./database/mongodb")
 const axios = require('axios');
 const morgan = require('morgan');
-
 require('dotenv').config({path:'./.env'})
 app.use(express.json())
 app.use(express.urlencoded({ extended: true}))
@@ -26,9 +25,7 @@ app.use('/user',userRouter);
 
 app.use(morgan('dev'));
 app.use((req,res,next) =>{
-  const erro = new Error('Não Encontrado');
-  erro.status = 404;
-  next(erro);
+  res.status(404).send({"error": "Not Found"})
 });
 
 
