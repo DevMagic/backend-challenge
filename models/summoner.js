@@ -23,7 +23,7 @@ const SummonerSchema = mongoose.Schema({
         unique: true
     },
     userId:{
-        type: Number
+        type: String
     }
 })
 

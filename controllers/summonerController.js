@@ -14,9 +14,10 @@ exports.cadSummoner = async(req,res)=>{
         const idSummoner = user.data.id
         const exist = await Summoner.findOne({"summonerId":idSummoner})
         if(exist){
-            console.log(exist)
+        
             return res.status(401).send({"error": "This summoner name already exists"})    
         }
+        
        await Summoner.create({
             _id: uuid(),
             nickname: user.data.name,
@@ -24,7 +25,7 @@ exports.cadSummoner = async(req,res)=>{
             summonerLevel: user.data.summonerLevel,
             profileIconId: user.data.profileIconId,
             summonerId: user.data.id,
-            userId: req.body._id
+            userId: req.user._id
         })
         return res.status(200).send({"message": "Summoner created"})
     
@@ -33,7 +34,9 @@ exports.cadSummoner = async(req,res)=>{
         if(err.response.status === 404){
             return res.status(404).send({"error": "Summoner name not found in League of Legends database"})
         }
-    
+        if(err.response.status === 403){
+            return res.status(403).send({"error": "Forbidden"})
+        }
         return res.status(400).send({"error": "Error registering summoner"})
  
     }
@@ -55,14 +58,32 @@ exports.deleteSummoner = async (req, res)=>{
         if(!idSummoner){
             return res.status(400).send({"error": "Empty summoner id"})
         }
-        const user = await Summoner.findByIdAndDelete({"_id":idSummoner})
+        const user = await Summoner.findOneAndDelete({_id: idSummoner, userId: req.user._id})
         if(!user){
             return res.status(404).send({"error": "Summoner not found"})
         }
-        await Summoner.findByIdAndDelete({"_id":idSummoner})
-        res.status(200).send({"message": "Summoner successfully removed"})
+        res.status(200).send({"message": "Successfully deleted"})
     }catch(err){
-        console.log(err)
+
+        return res.status(400).send({"error": "Error in database"})
+    }
+}
+
+exports.updateSummoner = async(req,res)=>{
+    try{
+        const {_id,summonerName,summonerLevel} = req.body
+
+        if(!_id || !summonerName || !summonerLevel){
+            return res.status(400).send({"error":"Empty fieds"})
+        }
+        const user = await Summoner.findOneAndUpdate({_id: _id, userId: req.user._id},{nickname: summonerName, summonerLevel: summonerLevel})
+            if(user){
+                return res.status(200).send(user)
+            }
+            return res.status(404).send({"error": "Summoner not found"})
+     
+    }catch(err){
+
         return res.status(400).send({"error": "Error in database"})
     }
 }

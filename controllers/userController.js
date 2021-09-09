@@ -48,7 +48,7 @@ exports.login = async (req, res) => {
                         _id: user._id,
                         email: email
                     },process.env.JWT_KEY,{
-                        expiresIn: "30m"
+                        expiresIn: "10h"
                     })
                     return res.status(200).send({"token":token})
                 }

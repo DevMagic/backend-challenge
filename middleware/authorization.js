@@ -9,7 +9,7 @@ module.exports = (req,res,next)=>{
         req.user = decodedToken
         next()
     }catch(err){
-        res.status(401).send({"error": "Anauthorized token"})
+        res.status(403).send({"error": "Unauthorized token"})
         
     } 
 }
