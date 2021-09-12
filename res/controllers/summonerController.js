@@ -1,7 +1,35 @@
 const Summoner = require("../models/summoner");
 const {v4:uuid} = require("uuid")
 const axios = require('axios');
-const exceljs = require("exceljs")
+const exceljs = require("exceljs");
+const { restart } = require("nodemon");
+
+function isValid(a,b,res){
+    if(isNaN(a) || isNaN(b)){
+        return res.status(400).send({"error": "Invalid number"})
+    }
+    if(a>b){
+        return res.status(400).send({"error": "Minimum invalid value"})
+    }
+    return true
+}
+
+function requestSummonerIdApiLol(summoners){
+    let values = summoners.map(async (summoner) => {
+        const result = await axios.get(encodeURI(`https://br1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summoner.summonerId}?api_key=${process.env.LOL_KEY}`));       
+        let wins = 0
+        let losses = 0
+        result.data.map((curr)=>{           
+            wins = wins + curr.wins
+            losses = losses + curr.losses
+        })
+
+ 
+ 
+       return Object.assign({},summoner._doc,{"wins":wins,"losses":losses});
+    })
+    return values
+}
 
 exports.cadSummoner = async(req,res)=>{
     try{
@@ -44,30 +72,70 @@ exports.cadSummoner = async(req,res)=>{
 
 exports.showAllSummonersDetailed = async (req, res)=>{
     try{
-        const summoners = await Summoner.find({})
-
-        if(!summoners){
-            return res.status(404).send({"error": "Not found summoners in database"})
+        let summoners
+        const {nickname, summonerLevelMin, summonerLevelMax, 
+            winsMin, winsMax , lossesMin, lossesMax} = req.params
+           
+        if(nickname == "@" && summonerLevelMin == "@" && summonerLevelMax == "@" && winsMin == "@" && winsMax == "@" && lossesMin == "@" && lossesMax== "@"){         
+            summoners = await Summoner.find({})
+            if(!summoners){
+                return res.status(404).send({"error": "Not found summoners in database"})
+            }
+            const results = await Promise.all(requestSummonerIdApiLol(summoners))
+            res.status(200).send(results)
         }
-      
-        const results = await Promise.all(summoners.map(async (summoner) => {
-            const result = await axios.get(encodeURI(`https://br1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summoner.summonerId}?api_key=${process.env.LOL_KEY}`));       
-            let wins = 0
-            let losses = 0
-            result.data.map((curr)=>{           
-                wins = wins + curr.wins
-                losses = losses + curr.losses
-            })
+        else if(nickname !== "@" && summonerLevelMin == "@" && summonerLevelMax == "@" && winsMin == "@" && winsMax == "@" && lossesMin == "@" && lossesMax== "@"){
+            summoners = await Summoner.find(({nickname: {$regex: nickname, $options: 'i'}}))
+            if(!summoners){
+                return res.status(404).send({"error": "Not found summoners in database"})
+            }
+            const results = await Promise.all(requestSummonerIdApiLol(summoners))
+            res.status(200).send(results)
+        }
+        else if(nickname == "@" && summonerLevelMin !== "@" && summonerLevelMax !== "@" && winsMin == "@" && winsMax == "@" && lossesMin == "@" && lossesMax== "@"){
+            if(isValid(summonerLevelMin,summonerLevelMax,res)===true){
+                summoners = await Summoner.find({$and:[{summonerLevel: {$gte: summonerLevelMin}},{summonerLevel: {$lte: summonerLevelMax}}]})
+                if(!summoners){
+                    return res.status(404).send({"error": "Not found summoners in database"})
+                }
+                const results = await Promise.all(requestSummonerIdApiLol(summoners))
+                res.status(200).send(results)
+            }
+
+        }
+        else if(nickname == "@" && summonerLevelMin == "@" && summonerLevelMax == "@" && winsMin !== "@" && winsMax !== "@" && lossesMin == "@" && lossesMax== "@"){
+            summoners = await Summoner.find({})
+            if(isValid(winsMin,winsMax,res)===true){
+                if(!summoners){
+                    return res.status(404).send({"error": "Not found summoners in database"})
+                }
+                const results = await Promise.all(requestSummonerIdApiLol(summoners))
+                const resultsFiltred = results.filter(curr =>(curr.losses >= winsMin && curr.losses <= winsMax))
+                res.status(200).send(resultsFiltred)  
+            }
+         
+        }
+
+        else if(nickname == "@" && summonerLevelMin == "@" && summonerLevelMax == "@" && winsMin == "@" && winsMax == "@" && lossesMin !== "@" && lossesMax !== "@"){
+            summoners = await Summoner.find({})
+            if(isValid(lossesMin,lossesMax,res)===true){
+                if(!summoners){
+                    return res.status(404).send({"error": "Not found summoners in database"})
+                }
+                const results = await Promise.all(requestSummonerIdApiLol(summoners))
+                const resultsFiltred = results.filter(curr =>(curr.losses >= lossesMin && curr.losses <= lossesMax))
+                res.status(200).send(resultsFiltred)  
+            }
 
      
-     
-           return Object.assign({},summoner._doc,{"wins":wins,"losses":losses});
-        }))
-     
-       
+        }
+        else{
+            return res.status(400).send({"error": "Error in params"})
+        }
+    
     }catch(err){
-        console.log(err)
-        return res.status(400).send({"error": "Error in database"})
+
+        return res.status(400).send(err)
     }
 }
 
@@ -76,7 +144,7 @@ exports.showAllSummoners = async (req, res)=>{
         const summoners = await Summoner.find({})
         res.status(200).send(summoners)
     }catch(err){
-        console.log(err)
+        
         return res.status(400).send({"error": "Error in database"})
     }
 }
@@ -175,6 +243,12 @@ exports.generateXlsx = async(req,res)=>{
         })
        
     }catch(err){
+        if(err.response.status === 404){
+            return res.status(404).send({"error": "Summoner name not found in League of Legends database"})
+        }
+        if(err.response.status === 403){
+            return res.status(403).send({"error": "Forbidden"})
+        }
         res.status(400).send(err)
     }
 }
