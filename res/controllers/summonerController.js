@@ -34,7 +34,9 @@ function requestSummonerIdApiLol(summoners){
 exports.cadSummoner = async(req,res)=>{
     try{
         const {summonerName} = req.body
-
+        if((summonerName.length)>16) {
+            return res.status(400).send({"error":"Field need to be less than 17 characters"})
+        }
         if(!summonerName){
             return res.status(400).send({"error": "Empty summoner name"})
         } 
@@ -55,7 +57,7 @@ exports.cadSummoner = async(req,res)=>{
             summonerId: user.data.id,
             userId: req.user._id
         })
-        return res.status(200).send({"message": "Summoner created"})
+        return res.status(201).send({"message": "Summoner created"})
     
 
     }catch(err){
@@ -75,14 +77,20 @@ exports.showAllSummonersDetailed = async (req, res)=>{
         let summoners
         const {nickname, summonerLevelMin, summonerLevelMax, 
             winsMin, winsMax , lossesMin, lossesMax} = req.params
-           
+        if(nickname.length>16 ) {
+            
+            return res.status(400).send({"error":"Field name need to be less than 16 characters"})
+        } 
+        if(summonerLevelMin.length >5|| summonerLevelMax.length>5 || winsMin.length>5 || winsMax.length>5 || lossesMin.length>5  || lossesMax.length>5) {
+            return res.status(400).send({"error":"Numeric fields need to be less than 5 characters"})
+        } 
         if(nickname == "@" && summonerLevelMin == "@" && summonerLevelMax == "@" && winsMin == "@" && winsMax == "@" && lossesMin == "@" && lossesMax== "@"){         
             summoners = await Summoner.find({})
             if(!summoners){
                 return res.status(404).send({"error": "Not found summoners in database"})
             }
             const results = await Promise.all(requestSummonerIdApiLol(summoners))
-            res.status(200).send(results)
+            res.status(201).send(results)
         }
         else if(nickname !== "@" && summonerLevelMin == "@" && summonerLevelMax == "@" && winsMin == "@" && winsMax == "@" && lossesMin == "@" && lossesMax== "@"){
             summoners = await Summoner.find(({nickname: {$regex: nickname, $options: 'i'}}))
@@ -90,7 +98,7 @@ exports.showAllSummonersDetailed = async (req, res)=>{
                 return res.status(404).send({"error": "Not found summoners in database"})
             }
             const results = await Promise.all(requestSummonerIdApiLol(summoners))
-            res.status(200).send(results)
+            res.status(201).send(results)
         }
         else if(nickname == "@" && summonerLevelMin !== "@" && summonerLevelMax !== "@" && winsMin == "@" && winsMax == "@" && lossesMin == "@" && lossesMax== "@"){
             if(isValid(summonerLevelMin,summonerLevelMax,res)===true){
@@ -99,7 +107,7 @@ exports.showAllSummonersDetailed = async (req, res)=>{
                     return res.status(404).send({"error": "Not found summoners in database"})
                 }
                 const results = await Promise.all(requestSummonerIdApiLol(summoners))
-                res.status(200).send(results)
+                res.status(201).send(results)
             }
 
         }
@@ -111,7 +119,7 @@ exports.showAllSummonersDetailed = async (req, res)=>{
                 }
                 const results = await Promise.all(requestSummonerIdApiLol(summoners))
                 const resultsFiltred = results.filter(curr =>(curr.losses >= winsMin && curr.losses <= winsMax))
-                res.status(200).send(resultsFiltred)  
+                res.status(201).send(resultsFiltred)  
             }
          
         }
@@ -124,7 +132,7 @@ exports.showAllSummonersDetailed = async (req, res)=>{
                 }
                 const results = await Promise.all(requestSummonerIdApiLol(summoners))
                 const resultsFiltred = results.filter(curr =>(curr.losses >= lossesMin && curr.losses <= lossesMax))
-                res.status(200).send(resultsFiltred)  
+                res.status(201).send(resultsFiltred)  
             }
 
      
@@ -142,7 +150,7 @@ exports.showAllSummonersDetailed = async (req, res)=>{
 exports.showAllSummoners = async (req, res)=>{
     try{
         const summoners = await Summoner.find({})
-        res.status(200).send(summoners)
+        res.status(201).send(summoners)
     }catch(err){
         
         return res.status(400).send({"error": "Error in database"})
@@ -152,6 +160,10 @@ exports.showAllSummoners = async (req, res)=>{
 exports.deleteSummoner = async (req, res)=>{
     try{
         const {idSummoner} = req.body
+        if(idSummoner.length>36 ) {
+            
+            return res.status(400).send({"error":"Field id need to be less than 37 characters"})
+        } 
         if(!idSummoner){
             return res.status(400).send({"error": "Empty summoner id"})
         }
@@ -159,7 +171,7 @@ exports.deleteSummoner = async (req, res)=>{
         if(!user){
             return res.status(404).send({"error": "Summoner not found"})
         }
-        res.status(200).send({"message": "Successfully deleted"})
+        res.status(201).send({"message": "Successfully deleted"})
     }catch(err){
 
         return res.status(400).send({"error": "Error in database"})
@@ -168,14 +180,29 @@ exports.deleteSummoner = async (req, res)=>{
 
 exports.updateSummoner = async(req,res)=>{
     try{
+        
         const {_id,summonerName,summonerLevel} = req.body
 
         if(!_id || !summonerName || !summonerLevel){
             return res.status(400).send({"error":"Empty fieds"})
         }
+
+         if(_id.length>36 ) {
+            
+            return res.status(400).send({"error":"Field id need to be less than 37 characters"})
+        } 
+        if(summonerName.length>16 ) {
+            
+            return res.status(400).send({"error":"Field name need to be less than 17 characters"})
+        } 
+        if(summonerLevel.length>5 ) {
+            
+            return res.status(400).send({"error":"Field id need to be less than 5 characters"})
+        } 
         const user = await Summoner.findOneAndUpdate({_id: _id, userId: req.user._id},{nickname: summonerName, summonerLevel: summonerLevel})
             if(user){
-                return res.status(200).send(user)
+                const alteredUser = await Summoner.findOne({_id:_id})
+                return res.status(201).send(alteredUser)
             }
             return res.status(404).send({"error": "Summoner not found"})
      

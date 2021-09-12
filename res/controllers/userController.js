@@ -8,7 +8,10 @@ exports.createUser = async (req, res) => {
   const {name, email, password} = req.body
   try{
         if(!name || !password || !email) {
-            return res.status(400).send({"error":"Empty fieds"})
+            return res.status(400).send({"error":"Empty fields"})
+        }
+        if((name.length || password.length || email.length)>20) {
+            return res.status(400).send({"error":"Fields need to be less than 20 characters"})
         }
         const user = await User.findOne({email})
         if(user) {
@@ -26,14 +29,17 @@ exports.createUser = async (req, res) => {
         }
        
   }catch(err){
-    return res.status(400).send({"error":err})
+    return res.status(400).send({"error":"error when registering the user"})
+
   }
 
 };
 
 exports.login = async (req, res) => {
     const {name, email, password} = req.body
-    
+    if((name.length || password.length || email.length)>20) {
+        return res.status(400).send({"error":"Fields need to be less than 20 characters"})
+    }
     try{
         if(!name || !email || !password){
             return res.status(400).send({"error":"Empty fieds"})
