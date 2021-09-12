@@ -25,7 +25,7 @@ const SummonerSchema = mongoose.Schema({
     userId:{
         type: String
     }
-})
+},{ versionKey: false })
 
 const Summoner = mongoose.model("Summoner", SummonerSchema);
 module.exports = Summoner

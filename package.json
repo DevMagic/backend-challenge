@@ -14,11 +14,13 @@
     "axios": "^0.21.4",
     "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
+    "exceljs": "^4.3.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.5",
     "morgan": "^1.10.0",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "xlsx": "^0.17.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.12"

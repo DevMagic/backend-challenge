@@ -17,7 +17,8 @@ const UserSchema = new Mongoose.Schema({
         type: String,
         required: true
     }
-})
+},
+{ versionKey: false })
 
 
 const User = Mongoose.model("User",UserSchema)
