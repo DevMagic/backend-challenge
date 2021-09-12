@@ -132,7 +132,7 @@ exports.showAllSummonersDetailed = async (req, res)=>{
                 }
                 const results = await Promise.all(requestSummonerIdApiLol(summoners))
                 const resultsFiltred = results.filter(curr =>(curr.losses >= lossesMin && curr.losses <= lossesMax))
-                res.status(201).send(resultsFiltred)  
+                res.status(200).send(resultsFiltred)  
             }
 
      
@@ -150,7 +150,7 @@ exports.showAllSummonersDetailed = async (req, res)=>{
 exports.showAllSummoners = async (req, res)=>{
     try{
         const summoners = await Summoner.find({})
-        res.status(201).send(summoners)
+        res.status(200).send(summoners)
     }catch(err){
         
         return res.status(400).send({"error": "Error in database"})
@@ -171,7 +171,7 @@ exports.deleteSummoner = async (req, res)=>{
         if(!user){
             return res.status(404).send({"error": "Summoner not found"})
         }
-        res.status(201).send({"message": "Successfully deleted"})
+        res.status(200).send({"message": "Successfully deleted"})
     }catch(err){
 
         return res.status(400).send({"error": "Error in database"})
@@ -202,7 +202,7 @@ exports.updateSummoner = async(req,res)=>{
         const user = await Summoner.findOneAndUpdate({_id: _id, userId: req.user._id},{nickname: summonerName, summonerLevel: summonerLevel})
             if(user){
                 const alteredUser = await Summoner.findOne({_id:_id})
-                return res.status(201).send(alteredUser)
+                return res.status(200).send(alteredUser)
             }
             return res.status(404).send({"error": "Summoner not found"})
      
