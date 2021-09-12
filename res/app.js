@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require("./database/mongodb")
 
-const morgan = require('morgan');
+
 require('dotenv').config({path:'./.env'})
 app.use(express.json())
 app.use(express.urlencoded({ extended: true}))
@@ -15,7 +15,7 @@ const summonerRouter = require("./routes/summonerRouter")
 app.use('/user',userRouter);
 app.use('/summoner',summonerRouter);
 
-app.use(morgan('dev'));
+
 app.use((req,res,next) =>{
   res.status(404).send({"error": "Not Found"})
 });
