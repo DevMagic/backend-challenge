@@ -2,17 +2,8 @@ const Summoner = require("../models/summoner");
 const {v4:uuid} = require("uuid")
 const axios = require('axios');
 const exceljs = require("exceljs");
-const { restart } = require("nodemon");
+const handlingErrors = require("../handling/handling")
 
-function isValid(a,b,res){
-    if(isNaN(a) || isNaN(b)){
-        return res.status(400).send({"error": "Invalid number"})
-    }
-    if(a>b){
-        return res.status(400).send({"error": "Minimum invalid value"})
-    }
-    return true
-}
 
 function requestSummonerIdApiLol(summoners){
     let values = summoners.map(async (summoner) => {
@@ -23,8 +14,6 @@ function requestSummonerIdApiLol(summoners){
             wins = wins + curr.wins
             losses = losses + curr.losses
         })
-
- 
  
        return Object.assign({},summoner._doc,{"wins":wins,"losses":losses});
     })
@@ -34,12 +23,10 @@ function requestSummonerIdApiLol(summoners){
 exports.cadSummoner = async(req,res)=>{
     try{
         const {summonerName} = req.body
-        if((summonerName.length)>16) {
-            return res.status(400).send({"error":"Field need to be less than 17 characters"})
+        const erros = await handlingErrors.handling(req.body,[16])
+        if(erros.length){
+            return res.status(400).send({error: erros.join("; ")})
         }
-        if(!summonerName){
-            return res.status(400).send({"error": "Empty summoner name"})
-        } 
         const user = await axios.get(encodeURI(`https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${summonerName}?api_key=${process.env.LOL_KEY}`))
         const idSummoner = user.data.id
         const exist = await Summoner.findOne({"summonerId":idSummoner})
@@ -65,7 +52,7 @@ exports.cadSummoner = async(req,res)=>{
             return res.status(404).send({"error": "Summoner name not found in League of Legends database"})
         }
         if(err.response.status === 403){
-            return res.status(403).send({"error": "Forbidden"})
+            return res.status(403).send({"error": "Forbidden League of Legends Token"})
         }
         return res.status(400).send({"error": "Error registering summoner"})
  
@@ -77,14 +64,19 @@ exports.showAllSummonersDetailed = async (req, res)=>{
         let summoners
         const {nickname, summonerLevelMin, summonerLevelMax, 
             winsMin, winsMax , lossesMin, lossesMax} = req.params
-        if(nickname.length>16 ) {
-            
-            return res.status(400).send({"error":"Field name need to be less than 16 characters"})
-        } 
-        if(summonerLevelMin.length >5|| summonerLevelMax.length>5 || winsMin.length>5 || winsMax.length>5 || lossesMin.length>5  || lossesMax.length>5) {
-            return res.status(400).send({"error":"Numeric fields need to be less than 5 characters"})
-        } 
-        if(nickname == "@" && summonerLevelMin == "@" && summonerLevelMax == "@" && winsMin == "@" && winsMax == "@" && lossesMin == "@" && lossesMax== "@"){         
+            const erros = await handlingErrors.handling(req.params,[16,4,4,4,4,4,4])
+            if(erros.length){
+                return res.status(400).send({error: erros.join("; ")})
+            }
+        const checkParams = Object.keys(req.params).filter((key)=>{
+            if(req.params[key] !== "@"){
+                return key
+            }
+           
+        })  
+              
+        if(checkParams.length === 0){         
+           
             summoners = await Summoner.find({})
             if(!summoners){
                 return res.status(404).send({"error": "Not found summoners in database"})
@@ -92,7 +84,8 @@ exports.showAllSummonersDetailed = async (req, res)=>{
             const results = await Promise.all(requestSummonerIdApiLol(summoners))
             res.status(201).send(results)
         }
-        else if(nickname !== "@" && summonerLevelMin == "@" && summonerLevelMax == "@" && winsMin == "@" && winsMax == "@" && lossesMin == "@" && lossesMax== "@"){
+
+        else if(checkParams.length === 1 && checkParams.includes("nickname")){
             summoners = await Summoner.find(({nickname: {$regex: nickname, $options: 'i'}}))
             if(!summoners){
                 return res.status(404).send({"error": "Not found summoners in database"})
@@ -100,8 +93,10 @@ exports.showAllSummonersDetailed = async (req, res)=>{
             const results = await Promise.all(requestSummonerIdApiLol(summoners))
             res.status(201).send(results)
         }
-        else if(nickname == "@" && summonerLevelMin !== "@" && summonerLevelMax !== "@" && winsMin == "@" && winsMax == "@" && lossesMin == "@" && lossesMax== "@"){
-            if(isValid(summonerLevelMin,summonerLevelMax,res)===true){
+
+        else if(checkParams.length === 2 && checkParams.includes("summonerLevelMin") && checkParams.includes("summonerLevelMax")){
+            const validedNumbers = handlingErrors.isValid(summonerLevelMin,summonerLevelMax)
+            if(validedNumbers===true){
                 summoners = await Summoner.find({$and:[{summonerLevel: {$gte: summonerLevelMin}},{summonerLevel: {$lte: summonerLevelMax}}]})
                 if(!summoners){
                     return res.status(404).send({"error": "Not found summoners in database"})
@@ -109,24 +104,27 @@ exports.showAllSummonersDetailed = async (req, res)=>{
                 const results = await Promise.all(requestSummonerIdApiLol(summoners))
                 res.status(201).send(results)
             }
+            return res.status(400).send({error: validedNumbers})
 
         }
-        else if(nickname == "@" && summonerLevelMin == "@" && summonerLevelMax == "@" && winsMin !== "@" && winsMax !== "@" && lossesMin == "@" && lossesMax== "@"){
+        else if(checkParams.length === 2 && checkParams.includes("winsMin") && checkParams.includes("winsMax")){
+            const validedNumbers = handlingErrors.isValid(summonerLevelMin,summonerLevelMax)
+            if(validedNumbers===true){
             summoners = await Summoner.find({})
-            if(isValid(winsMin,winsMax,res)===true){
                 if(!summoners){
                     return res.status(404).send({"error": "Not found summoners in database"})
                 }
                 const results = await Promise.all(requestSummonerIdApiLol(summoners))
-                const resultsFiltred = results.filter(curr =>(curr.losses >= winsMin && curr.losses <= winsMax))
+                const resultsFiltred = results.filter(curr =>(curr.wins >= winsMin && curr.wins <= winsMax))
                 res.status(201).send(resultsFiltred)  
             }
-         
+            return res.status(400).send({error: validedNumbers})
         }
 
-        else if(nickname == "@" && summonerLevelMin == "@" && summonerLevelMax == "@" && winsMin == "@" && winsMax == "@" && lossesMin !== "@" && lossesMax !== "@"){
+        else if(checkParams.length === 2 && checkParams.includes("lossesMin") && checkParams.includes("lossesMax")){
+            const validedNumbers = handlingErrors.isValid(summonerLevelMin,summonerLevelMax)
+            if(validedNumbers===true){
             summoners = await Summoner.find({})
-            if(isValid(lossesMin,lossesMax,res)===true){
                 if(!summoners){
                     return res.status(404).send({"error": "Not found summoners in database"})
                 }
@@ -134,11 +132,10 @@ exports.showAllSummonersDetailed = async (req, res)=>{
                 const resultsFiltred = results.filter(curr =>(curr.losses >= lossesMin && curr.losses <= lossesMax))
                 res.status(200).send(resultsFiltred)  
             }
-
-     
+            return res.status(400).send({error: validedNumbers})
         }
         else{
-            return res.status(400).send({"error": "Error in params"})
+            return res.status(400).send({"error": "Error when setting the parameters"})
         }
     
     }catch(err){
@@ -159,15 +156,12 @@ exports.showAllSummoners = async (req, res)=>{
 
 exports.deleteSummoner = async (req, res)=>{
     try{
-        const {idSummoner} = req.body
-        if(idSummoner.length>36 ) {
-            
-            return res.status(400).send({"error":"Field id need to be less than 37 characters"})
-        } 
-        if(!idSummoner){
-            return res.status(400).send({"error": "Empty summoner id"})
+        const {_id} = req.body
+        const erros = await handlingErrors.handling(req.body,[36])
+        if(erros.length){
+            return res.status(400).send({error: erros.join("; ")})
         }
-        const user = await Summoner.findOneAndDelete({_id: idSummoner, userId: req.user._id})
+        const user = await Summoner.findOneAndDelete({_id: _id, userId: req.user._id})
         if(!user){
             return res.status(404).send({"error": "Summoner not found"})
         }
@@ -183,22 +177,10 @@ exports.updateSummoner = async(req,res)=>{
         
         const {_id,summonerName,summonerLevel} = req.body
 
-        if(!_id || !summonerName || !summonerLevel){
-            return res.status(400).send({"error":"Empty fieds"})
+        const erros = await handlingErrors.handling(req.body,[36,16,4])
+        if(erros.length){
+            return res.status(400).send({error: erros.join("; ")})
         }
-
-         if(_id.length>36 ) {
-            
-            return res.status(400).send({"error":"Field id need to be less than 37 characters"})
-        } 
-        if(summonerName.length>16 ) {
-            
-            return res.status(400).send({"error":"Field name need to be less than 17 characters"})
-        } 
-        if(summonerLevel.length>5 ) {
-            
-            return res.status(400).send({"error":"Field id need to be less than 5 characters"})
-        } 
         const user = await Summoner.findOneAndUpdate({_id: _id, userId: req.user._id},{nickname: summonerName, summonerLevel: summonerLevel})
             if(user){
                 const alteredUser = await Summoner.findOne({_id:_id})

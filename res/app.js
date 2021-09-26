@@ -11,7 +11,6 @@ const userRouter = require("./routes/userRouter")
 const summonerRouter = require("./routes/summonerRouter")
 
 
-
 app.use('/user',userRouter);
 app.use('/summoner',summonerRouter);
 

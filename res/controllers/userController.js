@@ -3,16 +3,15 @@ const bcrypt = require("bcrypt")
 const {v4:uuid} = require("uuid")
 const jwt = require("jsonwebtoken")
 require('dotenv').config({path:'./.env'})
+const handlingErrors = require("../handling/handling")
 
 exports.createUser = async (req, res) => {
   const {name, email, password} = req.body
   try{
-        if(!name || !password || !email) {
-            return res.status(400).send({"error":"Empty fields"})
-        }
-        if((name.length || password.length || email.length)>20) {
-            return res.status(400).send({"error":"Fields need to be less than 20 characters"})
-        }
+    const erros = await handlingErrors.handling(req.body,[35,20,20])
+    if(erros.length){
+        return res.status(400).send({error: erros.join("; ")})
+    }
         const user = await User.findOne({email})
         if(user) {
             return res.status(409).send({"error":"E-mail already registered"})
@@ -37,8 +36,9 @@ exports.createUser = async (req, res) => {
 
 exports.login = async (req, res) => {
     const {name, email, password} = req.body
-    if((name.length || password.length || email.length)>20) {
-        return res.status(400).send({"error":"Fields need to be less than 20 characters"})
+    const erros = await handlingErrors.handling(req.body,[35,20,20])
+    if(erros.length){
+        return res.status(400).send({error: erros.join("; ")})
     }
     try{
         if(!name || !email || !password){
