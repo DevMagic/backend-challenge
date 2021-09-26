@@ -99,14 +99,18 @@ _Body_
 
 ##### OBS
 
-- Para iniciar o projeto, antes de tudo, deve se executar o comando "npm install" na raiz do projeto para instalar todas as dependências necessárias, após isso, deve executar o comando "node server.js". Com o servidor sendo executando, api pode ser acessada com o localhost:3000.
-- O Token expira depois de 10 horas que o usuário realizou o Login, podendo ser alterado o tempo para ser expirado no userControler.js.
+- Para iniciar o projeto, antes de tudo, deve se executar o comando "npm install" na raiz do projeto para instalar todas as dependências necessárias, após isso, deve ser executado o comando "node server.js". Com o servidor sendo executando, api pode ser acessada com o localhost:3000.
+- O bearer token expira depois de 10 horas que o usuário realizou o Login, podendo esse tempo ser alterado no userControler.js.
 - O usuário "Praymer" não consta na base de dados do League of Legends.
 - É necessário criar um banco de dados no MongoDB Atlas, passando as suas credencias nas váriaveis de ambiente
 - As várias de ambiente necessárias para acessar o projeto são:
-    - LOL_KEY
+    
+    - LOL_KEY (chave da API do LoL)
     - DB_PASSWORD
     - DB_USER
+    - DB_CLUSTER (caso tenham dúvidas, é possível gerar a string de conexão no próprio MongoDB Atlas, assim, dentro da string, o cluster fica entre a senha e o nome o banco de dados)
     - JWT_KEY (chave para aumentar a criptografia do Json Web Token)
+
+- É necessário atualizar a chave da API do League of Legends, pois ela expira em 24 horas.
 
 
