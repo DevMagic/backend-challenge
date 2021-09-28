@@ -8,7 +8,7 @@ const handlingErrors = require("../handling/handling")
 exports.createUser = async (req, res) => {
   const {name, email, password} = req.body
   try{
-    const erros = await handlingErrors.handling(req.body,[35,20,20])
+    const erros = await handlingErrors.handling(req.body,[35,20,20],[4,10,6])
     if(erros.length){
         return res.status(400).send({error: erros.join("; ")})
     }
@@ -36,7 +36,7 @@ exports.createUser = async (req, res) => {
 
 exports.login = async (req, res) => {
     const {name, email, password} = req.body
-    const erros = await handlingErrors.handling(req.body,[35,20,20])
+    const erros = await handlingErrors.handling(req.body,[35,20,20],[4,10,6])
     if(erros.length){
         return res.status(400).send({error: erros.join("; ")})
     }

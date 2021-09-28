@@ -23,7 +23,7 @@ function requestSummonerIdApiLol(summoners){
 exports.cadSummoner = async(req,res)=>{
     try{
         const {summonerName} = req.body
-        const erros = await handlingErrors.handling(req.body,[16])
+        const erros = await handlingErrors.handling(req.body,[16],[3])
         if(erros.length){
             return res.status(400).send({error: erros.join("; ")})
         }
@@ -64,7 +64,7 @@ exports.showAllSummonersDetailed = async (req, res)=>{
         let summoners
         const {nickname, summonerLevelMin, summonerLevelMax, 
             winsMin, winsMax , lossesMin, lossesMax} = req.params
-            const erros = await handlingErrors.handling(req.params,[16,4,4,4,4,4,4])
+            const erros = await handlingErrors.handling(req.params,[16,4,4,4,4,4,4],[3,1,1,1,1,1,1])
             if(erros.length){
                 return res.status(400).send({error: erros.join("; ")})
             }
@@ -157,7 +157,7 @@ exports.showAllSummoners = async (req, res)=>{
 exports.deleteSummoner = async (req, res)=>{
     try{
         const {_id} = req.body
-        const erros = await handlingErrors.handling(req.body,[36])
+        const erros = await handlingErrors.handling(req.body,[36],[35])
         if(erros.length){
             return res.status(400).send({error: erros.join("; ")})
         }
@@ -177,7 +177,7 @@ exports.updateSummoner = async(req,res)=>{
         
         const {_id,summonerName,summonerLevel} = req.body
 
-        const erros = await handlingErrors.handling(req.body,[36,16,4])
+        const erros = await handlingErrors.handling(req.body,[36,16,4],[35,3,1])
         if(erros.length){
             return res.status(400).send({error: erros.join("; ")})
         }
