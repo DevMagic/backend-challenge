@@ -18,7 +18,7 @@
 
 ### - Caso o passo acima não funcione, pare a aplicação e através da linha de comando navegue até o arquivo User.js e execute: node User.js
 
-## - Pronto, agora a tabela de usuários foi criada. Por favor, após a criação da tabela comente novamente ou remova a linha "User.sync({force:true"}) para que o nodemon não volte a tentar criar a tabela.
+### - Pronto, agora a tabela de usuários foi criada. Por favor, após a criação da tabela comente novamente ou remova a linha "User.sync({force:true"}) para que o nodemon não volte a tentar criar a tabela.
 
 ### - Repita os passos acima para a tabela de Summoners
 
