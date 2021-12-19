@@ -39,6 +39,14 @@ exports.createSummoner = async (req, res) => {
                 name, profileIconId, summonerLevel,
             } = summonerIdResponse.data;
 
+            const itemExists = await Summoner.findOne({ where: { AccountId: accountId, SummonerId: id } })
+
+            if (itemExists) {
+                return res.status(400).json({
+                    error: ` O Summoner ${itemExists.Nickname} já está cadastrado!`
+                })
+            }
+
             await Summoner.create({
                 Nickname: name,
                 AccountId: accountId,
@@ -75,7 +83,7 @@ exports.getSummoners = async (req, res) => {
 
 // Listando um summoner específico de acordo com o ID
 exports.getSummonersDetails = async (req, res) => {
-    const idSum = req.params.id;
+    const idSum  = req.params.id;
 
     const encryptedSummonerId = await Summoner.findByPk(idSum);
 
@@ -143,13 +151,13 @@ exports.exportSum = async (req, res) => {
 
         const workSheetName = 'Summoners';
 
-        let filePath = `./excelTable/summoners.xlsx`;
+        let filePath = `./ excelTable / summoners.xlsx`;
         // script para não repetir o nome do arquivo
         let newName = 0;
 
         if (fs.existsSync(filePath)) {
             newName = Math.round(Math.random() * 550 / 5) * 5 + 5;
-            filePath = `./excelTable/summoners${newName}.xlsx`
+            filePath = `./ excelTable / summoners${newName}.xlsx`
         }
 
         exportSummonersToExcel(summoners, workSheetColumnName, workSheetName, filePath);
