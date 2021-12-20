@@ -6,8 +6,6 @@
 
 ###  Desafio realizado utilizando MySQL e ORM sequelize
 
-
-
  - Coloque sua API_KEY da Riot no seu arquivo **.env**
 
 

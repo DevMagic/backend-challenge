@@ -151,13 +151,13 @@ exports.exportSum = async (req, res) => {
 
         const workSheetName = 'Summoners';
 
-        let filePath = `./ excelTable / summoners.xlsx`;
+        let filePath = `./excelTable/summoners.xlsx`;
         // script para não repetir o nome do arquivo
         let newName = 0;
 
         if (fs.existsSync(filePath)) {
             newName = Math.round(Math.random() * 550 / 5) * 5 + 5;
-            filePath = `./ excelTable / summoners${newName}.xlsx`
+            filePath = `./excelTable/summoners${newName}.xlsx`
         }
 
         exportSummonersToExcel(summoners, workSheetColumnName, workSheetName, filePath);
